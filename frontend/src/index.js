@@ -8,6 +8,7 @@ import reportWebVitals from "./reportWebVitals";
 import ThemeProvider from "./Theme";
 import { AuthProvider } from "./providers/AuthProvider";
 import { ContractProvider } from "./providers/ContractProvider";
+import './i18n';
 
 ReactDOM.render(
   <React.StrictMode>

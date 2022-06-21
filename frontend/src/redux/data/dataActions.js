@@ -21,6 +21,13 @@ const fetchDataFailed = (payload) => {
   };
 };
 
+export const SetLang = (payload) => {
+  return {
+    type: "SET_LANG",
+    payload: payload,
+  };
+};
+
 export const fetchData = () => {
   return async (dispatch) => {
     dispatch(fetchDataRequest());

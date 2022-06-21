@@ -2,6 +2,7 @@ const initialState = {
   loading: false,
   totalSupply: 0,
   cost: 0,
+  lang: 'en',
   error: false,
   errorMsg: "",
 };
@@ -30,6 +31,11 @@ const dataReducer = (state = initialState, action) => {
         loading: false,
         error: true,
         errorMsg: action.payload,
+      };
+    case "SET_LANG":
+      return {
+        ...initialState,
+        lang: action.payload,
       };
     default:
       return state;

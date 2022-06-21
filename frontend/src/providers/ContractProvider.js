@@ -18,7 +18,7 @@ export const ContractContext = createContext({
 
 export const ContractProvider = ({ children }) => {
   const [contract, setContract] = useState();
-  const [contract2, setContract2] = useState();
+  const [contractUSDT, setContractUSDT] = useState();
   const [web3, setWeb3] = useState();
   const { chainId, setSnackbar, provider } = useAuthContext();
   const [wrongNetwork, setWrongNetwork] = useState(false);
@@ -44,8 +44,8 @@ export const ContractProvider = ({ children }) => {
     const contract = new web3Instance.eth.Contract(abi, config.contractAddress);
     setContract(contract);
 
-    const contract2 = new web3Instance.eth.Contract(erc20Abi, config.contractAddress2);
-    setContract2(contract2);
+    const contractUSDT = new web3Instance.eth.Contract(erc20Abi, config.contractAddressUSDT);
+    setContractUSDT(contractUSDT);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainId]);
@@ -63,7 +63,7 @@ export const ContractProvider = ({ children }) => {
 
   return (
     <ContractContext.Provider
-      value={{ web3, contract, contract2, wrongNetwork, getBnbBalance, fromWei, toWei}}
+      value={{ web3, contract, contractUSDT, wrongNetwork, getBnbBalance, fromWei, toWei}}
     >
       {children}
     </ContractContext.Provider>

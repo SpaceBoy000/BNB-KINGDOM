@@ -13,7 +13,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* background: url(./assets/background.jpg) no-repeat; */
+  /* background: url(./assets/bg-img.png) no-repeat; */
   background-size: cover !important;
   background-repeat: no-repeat !important;
   background-position: center top !important;
@@ -82,17 +82,28 @@ input[type="number"] {
 @media only screen and (max-width: 767px) {
   .header_logo img {
     width: 300px;
+    z-index: 999;
     /* margin-top: 1rem; */
   }
 
-  .header_logo {
+  /* .header_logo {
     margin-left: 0% !important; 
+  } */
+
+  .landSet {
+    display: flex;
+    justify-content: center;
+    margin-right: 0 !important;
   }
 }
 
-.header_logo {
-  margin-left: 20%;
+.landSet {
+  margin-right: 5%;
 }
+
+/* .header_logo {
+  margin-left: 20%;
+} */
 
 .Mui-disabled {
   background-color: rgb(137, 111, 3) !important;
@@ -101,4 +112,35 @@ input[type="number"] {
 
 .MuiGrid-container {
   margin-left: -12px !important;
+}
+
+.MuiSelect-select {
+  padding: 9px 0 !important;
+  border: 0px !important;
+  outline: 0px !important;
+}
+
+.MuiSelect-select:hover {
+  outline: none !important;
+  border: none !important;
+}
+
+
+.MuiOutlinedInput-notchedOutline {
+  border-color: transparent !important;
+  border-style: none !important;
+}
+
+.MuiOutlinedInput-notchedOutline:hover {
+  border-color: transparent !important;
+  border-style: none !important;
+}
+
+.MuiOutlinedInput-notchedOutline:active {
+  border-color: transparent !important;
+  border-style: none !important;
+}
+
+.css-1d3z3hw-MuiOutlinedInput-notchedOutline {
+  border-style: none !important;
 }

@@ -3,6 +3,8 @@ import Box from "@mui/material/Box";
 import { styled } from "@mui/system";
 import logo from "../../assets/bnbking-logo.png";
 import Connect from "./Connect";
+import LanguageSelect from "./LanguageSelect";
+
 
 const Wrapper = styled("div")(({ theme }) => ({
   textAlign: "center",
@@ -36,6 +38,7 @@ const Countdown = styled("h3")(({ theme }) => ({
 }));
 
 export default function Header() {
+
   const [countdown, setCountdown] = useState({
     alive: true,
     days: 0,
@@ -83,15 +86,19 @@ export default function Header() {
   return (
     <Box
       component="div"
-      sx={{ px: { lg: 0, xs: 2 }, maxWidth: "calc(100% - 10%)", mx: "auto" }}
+      sx={{ px: { lg: 0, xs: 2 }, maxWidth: "calc(100% - 10%)", mx: "auto", zIndex:"1" }}
     >
       <Wrapper>
         <div className="header_logo">
           <img src={logo} alt="" width={"600px"} />
         </div>
 
-        <Box sx={{ textAlign: "right"}}>
+        <Box sx={{ display:"flex", }}>
+          <LanguageSelect responsive = {false}/>
           <Connect responsive = {false}/>
+        </Box>
+
+        <Box sx={{ textAlign: "right"}}>
         </Box>
 
         {/* { countdown.alive && 

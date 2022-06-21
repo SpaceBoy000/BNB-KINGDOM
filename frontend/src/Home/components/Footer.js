@@ -22,12 +22,21 @@ const SocailIcon = styled(IconButton)(({ theme }) => ({
 
 }));
 
+const FooterBox = styled(Box)(
+  ({ theme }) => `
+  @media only screen and (max-width: 900px){
+    margin-top: 30px;
+  }
 
+  @media only screen and (max-width: 376px){
+    margin-top: 70px;
+  }
+`,);
 
 export default function Footer() {
   return (
     <>
-      <Box component="div" sx={{ marginLeft:"-10px", px: 2, textAlign: "center" }}>
+      <FooterBox component="div" sx={{ marginLeft:"-10px", px: 2, textAlign: "center" }}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Box className="socialicon_wrap">
@@ -49,7 +58,7 @@ export default function Footer() {
             </Box>
           </Grid>
         </Grid> 
-      </Box>
+      </FooterBox>
     </>
   );
 }

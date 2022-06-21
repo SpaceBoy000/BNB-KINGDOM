@@ -5,8 +5,8 @@ import CachedIcon from "@mui/icons-material/Cached";
 import { useAuthContext } from "../../providers/AuthProvider";
 
 const ConnectButton = styled(Button)(({ theme }) => ({
-  // marginTop: "100px",
-  marginRight: "5%",
+  width: "190px",
+  marginRight: "6%",
   textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
   borderRadius: "5px",
   // border: "1px solid #ff5141",
@@ -28,7 +28,7 @@ const SmallScreenConnectButton = styled(Button)(({ theme }) => ({
   marginTop: "20px",
   marginBottom: 0,
   textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
-  width: "95%",
+  width: "45%",
   marginLeft: "auto",
   marginRight: "auto",
   backgroundImage: "linear-gradient(90deg, hsla(37, 100%, 50%, 0.75) 0%, hsla(48, 97%, 55%, 0.75) 100%)",
@@ -62,7 +62,7 @@ export default function Connect({responsive = true}) {
       disabled={loading}
       onClick={() => (address ? disconnect() : connect())}
     >
-      {address ? shorten(address) : "Connect"} <CachedIcon  sx={{marginLeft: '5px'}} />
+      {address ? shorten(address) : "Connect"}
     </SmallScreenConnectButton>
   );
 }

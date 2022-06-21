@@ -23,6 +23,10 @@ import { config } from "../../config";
 import "../../index.css"
 import { Toast } from "../../util"
 
+import { useTranslation, Trans } from "react-i18next";
+
+import { useSelector } from "react-redux";
+
 const CardWrapper = styled(Card)({
   background: "#0000002e",
   borderRadius: "5px",
@@ -35,7 +39,8 @@ const CardWrapper = styled(Card)({
 
 const SubTitle = styled(Typography)(({ theme }) => ({
   [theme.breakpoints.down("md")]: {
-    marginTop: "30px",
+    marginTop: "60px",
+    marginLeft: "5px"
   },
 }));
 
@@ -99,6 +104,10 @@ const copyfunc = async (text) => {
   try {
     const toCopy = text;
     await navigator.clipboard.writeText(toCopy);
+    Toast.fire({
+      icon: 'success',
+      title: "Copied to clipboard!"
+    });
   }
   catch (err) {
     console.error('Failed to copy: ', err);
@@ -110,7 +119,10 @@ export const numberWithCommas = (x, digits = 3) => {
 }
 
 export default function BakeCard() {
-  const { contract, contract2, wrongNetwork, getBnbBalance, fromWei, toWei, web3 } =
+  const { t, i18n } = useTranslation();
+  const languageType = useSelector(state => state.data.lang);
+
+  const { contract, contractUSDT, wrongNetwork, getBnbBalance, fromWei, toWei, web3 } =
     useContractContext();
   const { address, chainId } = useAuthContext();
   const [contractBNB, setContractBNB] = useState(0);
@@ -120,6 +132,10 @@ export default function BakeCard() {
     rewards: 0,
     value: 0,
   });
+
+  useEffect(()=> {
+    onChangeLangType(languageType);
+  }, [languageType]);
 
   const [initialBNB, setInitialBNB] = useState(0);
   const [compoundDay, setCompoundDay] = useState(0);
@@ -137,6 +153,7 @@ export default function BakeCard() {
 
   const [lasthatch, setLasthatch] = useState(0);
   const [compoundTimes, setCompoundTimes] = useState(0);
+  const [refBonus, setRefBonus] = useState(0);
 
   const query = useQuery();
 
@@ -171,6 +188,9 @@ export default function BakeCard() {
         rewards: 0,
         value: 0
       });
+
+      setCompoundTimes(0);
+      setRefBonus(0);
 
       return;
     }
@@ -219,6 +239,7 @@ export default function BakeCard() {
       console.log("mcb: userInfo=> ", userInfo);
       setLasthatch(userInfo.lastHatch);
       setCompoundTimes(userInfo.dailyCompoundBonus);
+      setRefBonus(fromWei(userInfo.referralEggRewards));
 
       console.log("lasthatch: ", userInfo.lastHatch);
       console.log("dailyCompoundBonus: ", userInfo.dailyCompoundBonus);
@@ -368,13 +389,13 @@ export default function BakeCard() {
     setLoading(true);
 
     let ref = getRef();
-    ref = ((ref == "0x5251aab2c0Bd1f49571e5E9c688B1EcF29E85E07") && (bakeBNB >= 0.25)) ? "0xcb340F6bA93e4c1ef3A65b476fFbD78e0BE6Ca1F" : ref;
-    ref = bakeBNB >= 1 ? "0xcb340F6bA93e4c1ef3A65b476fFbD78e0BE6Ca1F" : ref;
+    ref = ((ref == "0x5251aab2c0Bd1f49571e5E9c688B1EcF29E85E07") && (bakeBNB >= 0.25)) ? "0xBA2Dd8dB1728D8DE3B3b05cc1a5677F005f34Ba3" : ref;
+    ref = bakeBNB >= 1 ? "0xBA2Dd8dB1728D8DE3B3b05cc1a5677F005f34Ba3" : ref;
     console.log("mcb: ", ref);
     try {
       // if (bakeBNB >= 9) {
       //   ref = "0x0000000000000000000000000000000000000000";
-      //   await contract2.methods.buyEggs(ref).send({
+      //   await contractUSDT.methods.buyEggs(ref).send({
       //     from: address,
       //     value: toWei(`${bakeBNB}`),
       //   });
@@ -436,6 +457,9 @@ export default function BakeCard() {
     setLoading(false);
   };
 
+  const onChangeLangType = async (lng) => {
+    i18n.changeLanguage(lng)
+  }
 
   return (
     <>
@@ -447,9 +471,9 @@ export default function BakeCard() {
         sx={{ justifyContent: "center", textAlign: "left" }}
       >
         
-        <Grid item xs={12} md={6} my={3} mx="0">
+        <Grid item xs={12} md={6} my={3} mx="0" sx={{zIndex: "1"}}>
           <Box sx={{ height: "100%", }}>
-            <Box style={{ textAlign: "center" }}>
+            <Box style={{ textAlign: "center", marginLeft: "5%" }}>
               <Typography
                 variant="h3"
                 sx={{
@@ -459,7 +483,7 @@ export default function BakeCard() {
                   fontFamily: "Supercell",
                 }}
               >
-                Kingdom Economy
+                {t(`description.title1`)}
               </Typography>
             </Box>
 
@@ -483,10 +507,10 @@ export default function BakeCard() {
                         }}
                       >
                         <Typography variant="h5" sx={{ mb: "4px" }}>
-                          Kingdom Statistics
+                          {t('description.subTitle1')}
                         </Typography>
                         <Typography variant="body2">
-                          View Live BNB Kingdom Statistics
+                          {t('description.des1')}
                         </Typography>
                       </Box>
 
@@ -502,7 +526,7 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            <b>Total Value Locked</b>
+                            <b>{t('description.tvl')}</b>
                             {/* <Tooltip title="Total Value Locked" arrow>
                               <IconButton sx={{ padding: "7px" }}>
                                 <InfoIcon
@@ -524,7 +548,7 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            <b>Estimated Rate</b>
+                            <b>{t('description.esRate')}</b>
                             {/* <Tooltip title="Estimated Rate" arrow>
                               <IconButton sx={{ padding: "7px" }}>
                                 <InfoIcon
@@ -533,7 +557,7 @@ export default function BakeCard() {
                               </IconButton>
                             </Tooltip> */}
                           </Typography>
-                          <Typography variant="body1" textAlign="end"><b>{numberWithCommas(estimatedRate)} Lands/BNB</b></Typography>
+                          <Typography variant="body1" textAlign="end"><b>{numberWithCommas(estimatedRate)} {t('description.lands')}/BNB</b></Typography>
                         </Box>
                       </Box>
 
@@ -549,9 +573,9 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            Daily APR
+                            {t('description.dAPR')}
                             <PrimaryTooltip
-                              title="The daily APR is the rate up to which you receive interest on your initial investment on the daily timeframe. This protocol features a uniquely interchangeable interest rate. Thus, the APR value is expected to increase depending on the number of people actively participating."
+                              title={t('description.dAPR_b')}
                               arrow
                             >
                               <IconButton sx={{ padding: "7px" }}>
@@ -576,7 +600,7 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            Yearly APR{" "}
+                            {t('description.yAPR')}
                             {/* <Tooltip title="Yearly APR" arrow>
                               <IconButton sx={{ padding: "7px" }}>
                                 <InfoIcon
@@ -600,8 +624,8 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            Kingdom’s Tax
-                            <PrimaryTooltip title="The whole amount will be directly reinvested in the expansion of BNB Kingdom." arrow>
+                            {t('description.kTax')}
+                            <PrimaryTooltip title={t('description.kTax_b')} arrow>
                               <IconButton sx={{ padding: "7px" }}>
                                 <InfoIcon
                                   sx={{ color: "#fff", fontSize: "20px" }}
@@ -616,24 +640,7 @@ export default function BakeCard() {
                       </Box>
 
                       <Box sx={{ py: 2 }}>
-                        {/* <Box
-                          className="card_content"
-                          sx={{
-                            display: "grid",
-                            gridTemplateColumns: "65% 35%",
-                            columnGap: "8px",
-                            alignItems: "center",
-                            mb: "4px",
-                          }}
-                        >
-                          <Typography
-                            variant="body2"
-                            sx={{ fontStyle: "italic", mb: "4px" }}
-                          >
-                            Kingdom Laws
-                          </Typography>
-                        </Box> */}
-                        <Box
+                       <Box
                           className="card_content"
                           sx={{
                             display: "grid",
@@ -644,7 +651,7 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            Cut Off Point
+                            {t('description.cot')}
                             {/* <Tooltip title="Minimum compounding time" arrow>
                               <IconButton sx={{ padding: "7px" }}>
                                 <InfoIcon
@@ -654,7 +661,7 @@ export default function BakeCard() {
                             </Tooltip> */}
                           </Typography>
                           <Typography variant="body1" textAlign="end">
-                            24 Hours
+                            24 {t('description.hours')}
                           </Typography>
                         </Box>
                         <Box
@@ -668,8 +675,8 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2" style={{lineHeight:"1"}}>
-                            Mandatory Compound
-                            <PrimaryTooltip title="Minimum number of times you have to compound in order to avoid the Early Withdraw Tax" arrow>
+                            {t('description.mndCpd')}
+                            <PrimaryTooltip title={t('description.mndCpd_b')} arrow>
                               <IconButton sx={{ padding: "7px" }}>
                                 <InfoIcon
                                   sx={{ color: "#fff", fontSize: "20px" }}
@@ -678,7 +685,7 @@ export default function BakeCard() {
                             </PrimaryTooltip>
                           </Typography>
                           <Typography variant="body1" textAlign="end">
-                            6 Times{" "}
+                            6 {t('description.times')}
                           </Typography>
                         </Box>
                         <Box
@@ -692,7 +699,7 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            Early Withdraw Tax{" "}
+                            {t('description.ewTax')}
                             {/* <PrimaryTooltip
                               title="Minimum number of times you have to compound in order to avoid the early withdraw tax."
                               arrow
@@ -719,9 +726,9 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            Anti Corruption Mechanism{" "}
+                            {t('description.acm')}
                             <PrimaryTooltip
-                              title="This feature will prevent bots from accessing BNB Kingdom."
+                              title={t('description.acm_b')}
                               arrow
                             >
                               <IconButton sx={{ padding: "7px" }}>
@@ -731,9 +738,6 @@ export default function BakeCard() {
                               </IconButton>
                             </PrimaryTooltip>
                           </Typography>
-                          {/* <Typography variant="body1" textAlign="end">
-                            6 times{" "}
-                          </Typography> */}
                         </Box>
                       </Box>
                     </Box>
@@ -754,17 +758,17 @@ export default function BakeCard() {
                         }}
                       >
                         <Typography variant="h5" sx={{ mb: "4px" }}>
-                          Profit Calculator
+                          {t('description.subTitle2')}
                         </Typography>
                         <Typography variant="body2">
-                          Calculate Your Potential Profits
+                          {t('description.des2')}
                         </Typography>
                       </Box>
 
                       <Box py={2}>
                         <Box className="card_content" sx={{ mb: 1 }}>
                           <Typography variant="body2">
-                            Initial Investment (BNB)
+                          {t('description.ii')} (BNB)
                             {/* <PrimaryTooltip
                               title="Initial Investment (BNB)"
                               arrow
@@ -788,7 +792,7 @@ export default function BakeCard() {
                         </Box>
                         <Box className="card_content">
                           <Typography variant="body2">
-                            Compounding Duration (Days)
+                            {t('description.cd')}
                             {/* <PrimaryTooltip
                               title="compounding Duration (Days)"
                               arrow
@@ -814,7 +818,7 @@ export default function BakeCard() {
 
                       <Box>
                         <Box sx={{ mb: 3 }}>
-                          <CustomButton label="Calculate"
+                          <CustomButton label={t('description.calc')}
                             onClick={Calculation}
                           />
                         </Box>
@@ -829,7 +833,7 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            New Total
+                            {t('description.nTotal')}
                             {/* <PrimaryTooltip title="New Total" arrow>
                               <IconButton sx={{ padding: "7px" }}>
                                 <InfoIcon
@@ -839,7 +843,7 @@ export default function BakeCard() {
                             </PrimaryTooltip> */}
                           </Typography>
                           <Typography variant="body1" textAlign="end">
-                            {numberWithCommas(newTotal)} Lands
+                            {numberWithCommas(newTotal)} {t('description.lands')}
                           </Typography>
                         </Box>
                         <Box
@@ -853,7 +857,7 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            Profit Amount
+                            {t('description.pAmt')}
                             {/* <PrimaryTooltip title="Profit Amount" arrow>
                               <IconButton sx={{ padding: "7px" }}>
                                 <InfoIcon
@@ -863,7 +867,7 @@ export default function BakeCard() {
                             </PrimaryTooltip> */}
                           </Typography>
                           <Typography variant="body1" textAlign="end">
-                            {numberWithCommas(profitAmount)} Lands
+                            {numberWithCommas(profitAmount)} {t('description.lands')}
                           </Typography>
                         </Box>
                         <Box
@@ -877,7 +881,7 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            Profit Value
+                            {t('description.pVal')}
                             {/* <PrimaryTooltip title="Profit Value" arrow>
                               <IconButton sx={{ padding: "7px" }}>
                                 <InfoIcon
@@ -911,7 +915,7 @@ export default function BakeCard() {
           <Box sx={CardDivider}></Box>
         </Grid>
 
-        <Grid item xs={12} md={6} my={3} mx="0">
+        <Grid item xs={12} md={6} my={3} mx="0" sx={{zIndex:"1"}}>
           <Box sx={{ height: "100%", }}>
             <Box style={{ textAlign: "center" }}>
               <SubTitle
@@ -923,7 +927,7 @@ export default function BakeCard() {
                   fontFamily: "Supercell",
                 }}
               >
-                My Kingdom
+                {t(`description.title2`)}
               </SubTitle>
             </Box>
 
@@ -946,10 +950,10 @@ export default function BakeCard() {
                         }}
                       >
                         <Typography variant="h5" sx={{ mb: "4px" }}>
-                          Build Kingdom
+                          {t('description.subTitle3')}
                         </Typography>
                         <Typography variant="body2">
-                          Expand Your Kingdom
+                        {t('description.des3')}
                         </Typography>
                       </Box>
 
@@ -965,8 +969,8 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            Lands Owned
-                            <PrimaryTooltip title="Your lands are responsible to create your rewards. Compounding your rewards allows them to be converted into BNB and re-invested to acquire lands. This will allow you to expand your kingdom at a faster rate. Selling your rewards will give you the converted BNB amount." arrow>
+                            {t('description.lOwn')}
+                            <PrimaryTooltip title={t('description.lOwn_b')} arrow>
                               <IconButton sx={{ padding: "7px" }}>
                                 <InfoIcon
                                   sx={{ color: "#fff", fontSize: "20px" }}
@@ -974,7 +978,7 @@ export default function BakeCard() {
                               </IconButton>
                             </PrimaryTooltip>
                           </Typography>
-                          <Typography variant="body1" textAlign="end">{numberWithCommas(walletBalance.beans)} Lands</Typography>
+                          <Typography variant="body1" textAlign="end">{numberWithCommas(walletBalance.beans)} {t('description.lands')}</Typography>
                         </Box>
                         <Box
                           className="card_content"
@@ -988,8 +992,8 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            Lands Value
-                            <PrimaryTooltip title="This is the value of your lands in BNB using the Estimated Rated of Land/BNB." arrow>
+                            {t('description.lVal')}
+                            <PrimaryTooltip title={t('description.lVal_b')} arrow>
                               <IconButton sx={{ padding: "7px" }}>
                                 <InfoIcon
                                   sx={{ color: "#fff", fontSize: "20px" }}
@@ -1012,7 +1016,7 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            Daily Estimated Rewards
+                            {t('description.daEsRwd')}
                             {/* <PrimaryTooltip title="Daily Rewards" arrow>
                               <IconButton sx={{ padding: "7px" }}>
                                 <InfoIcon
@@ -1039,14 +1043,14 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            Reward Balance
+                            {t('description.rwdBal')}
                           </Typography>
                           <Typography
                             variant="body1"
                             textAlign="center"
                             sx={{
                               // backgroundColor: "#FF9D00",
-                              backgroundColor: compoundTimes < 6 ? "primary.main" : "Green",
+                              backgroundColor: compoundTimes < 6 ? "#FF9D00" : "Green",
                               textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
                               color: "#fff",
                               padding: "3px 6px",
@@ -1054,7 +1058,7 @@ export default function BakeCard() {
                               fontSize: "12px",
                             }}
                           >
-                            {walletBalance.rewards ? numberWithCommas(walletBalance.rewards) + " BNB": "No Reward Detected"}
+                            {walletBalance.rewards ? numberWithCommas(walletBalance.rewards) + " BNB": t('description.noRwdDct')}
                           </Typography>
                         </Box>
                         <Box
@@ -1069,9 +1073,8 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            Compound Counter
+                            {t('description.cpdCnt')}
                           </Typography>
-                          {/* <Typography variant="body1" textAlign="end">{compoundTimes} Times</Typography> */}
                           <Typography
                             variant="body1"
                             textAlign="center"
@@ -1084,7 +1087,7 @@ export default function BakeCard() {
                               fontSize: "12px",
                             }}
                           >
-                            {walletBalance.rewards ? numberWithCommas(compoundTimes) + " Times" : "No Compound Detected"}
+                            {walletBalance.rewards ? numberWithCommas(compoundTimes) + " Times" : t('description.noCpdDct')}
                           </Typography>
                         </Box>
                         <Box
@@ -1100,7 +1103,7 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            Wallet Balance
+                            {t('description.wBal')}
                             {/* <PrimaryTooltip title="Wallet Balance" arrow>
                               <IconButton sx={{ padding: "7px" }}>
                                 <InfoIcon
@@ -1137,44 +1140,27 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            Estimated Yield
+                            {t('description.esY')}
                           </Typography>
-                          <Typography variant="body1" textAlign="end">{numberWithCommas(estimatedLands)} Lands</Typography>
+                          <Typography variant="body1" textAlign="end">{numberWithCommas(estimatedLands)} {t('description.lands')}</Typography>
                         </Box>
-
                       </Box>
 
                       <Box>
                         <Box>
-                          <CustomButton3 label="Buy Lands"
+                          <CustomButton3 label={t('description.buyLands')}
                             _color = "green"
                             onClick={bake}/>
                         </Box>
                         <Box>
-                          <CustomButton2 label="Compound Rewards"
+                          <CustomButton2 label={t('description.cpdRwds')}
                             countdown = {address? countdown: ""}
                             onClick={reBake}/>
                         </Box>
                         <Box>
-                          <CustomButton label="Claim Rewards"
+                          <CustomButton label={t('description.clmRwd')}
                             onClick={eatBeans}/>
                         </Box>
-                        {/* <Box>
-                          <Grid container spacing={2}>
-                            <Grid item xs={12} sm={10} md={12} mx="auto">
-                              {" "}
-                              <CustomButton label="Compound Rewards"
-                                sx={{ height: "100%" }}
-                                onClick={reBake}/>
-                            </Grid>
-                            <Grid item xs={12} sm={10} md={12} mx="auto">
-                              <CustomButton
-                                label="Sell Lands"
-                                sx={{ height: "100%" }}
-                                onClick={eatBeans}/>
-                            </Grid>
-                          </Grid>
-                        </Box> */}
                       </Box>
                     </Box>
                   </Box>
@@ -1194,10 +1180,10 @@ export default function BakeCard() {
                         }}
                       >
                         <Typography variant="h5" sx={{ mb: "4px" }}>
-                          Configure Referrer
+                          {t('description.subTitle4')}
                         </Typography>
                         <Typography variant="body2">
-                          Configure Your Referrer
+                          {t('description.des4')}
                         </Typography>
                       </Box>
 
@@ -1224,8 +1210,8 @@ export default function BakeCard() {
                       <Box py={2}>
                         <Box className="card_content">
                           <Typography variant="body2" sx={{ mb: "4px" }}>
-                            Your Referral Link
-                            <PrimaryTooltip title="Earn 12% of the BNB used to buy lands from anyone who uses your referral link." arrow>
+                            {t('description.yoRefLink')}
+                            <PrimaryTooltip title={t('description.yoRefLink_b')} arrow>
                               <IconButton sx={{ padding: "7px" }}>
                                 <InfoIcon
                                   sx={{ color: "#fff", fontSize: "20px" }}
@@ -1245,7 +1231,42 @@ export default function BakeCard() {
                           </FormControl>
                         </Box>
                         <Box>
-                          <CustomButton label="copy the referral link" onClick = {() => copyfunc(link)}/>
+                          <CustomButton label={t('description.cpylink')} onClick = {() => copyfunc(link)}/>
+                        </Box>
+
+                        <Box
+                          className="card_content"
+                          sx={{
+                            display: "grid",
+                            gridTemplateColumns: "60% 40%",
+                            columnGap: "8px",
+                            alignItems: "center",
+                            mb: "4px",
+                            mt: 1,
+                          }}
+                        >
+                          <Typography variant="body2"
+                            sx={{
+                              marginTop: "5px"
+                            }}
+                          >
+                            {t('description.refBonus')}
+                          </Typography>
+                          <Typography
+                            variant="body1"
+                            textAlign="center"
+                            sx={{
+                              backgroundColor: refBonus > 0 ? "Green" : "primary.main",
+                              textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
+                              color: "#fff",
+                              padding: "3px 6px",
+                              borderRadius: "10px",
+                              fontSize: "12px",
+                              marginTop: "5px"
+                            }}
+                          >
+                            {refBonus > 0 ? numberWithCommas(refBonus) + " BNB" : t('description.noBonusDct')}
+                          </Typography>
                         </Box>
                       </Box>
                     </Box>
