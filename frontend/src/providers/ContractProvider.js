@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import Web3 from "web3";
 import erc20Abi from "../contracts/erc20.json";
 import abi from "../contracts/abi.json";
+import lottoryAbi from "../contracts/lottoryAbi.json";
 import { useAuthContext } from "./AuthProvider";
 import { config } from "../config";
 
@@ -19,6 +20,7 @@ export const ContractContext = createContext({
 export const ContractProvider = ({ children }) => {
   const [contract, setContract] = useState();
   const [contractUSDT, setContractUSDT] = useState();
+  const [contractLottory, setContractLottory] = useState();
   const [web3, setWeb3] = useState();
   const { chainId, setSnackbar, provider } = useAuthContext();
   const [wrongNetwork, setWrongNetwork] = useState(false);
@@ -44,6 +46,9 @@ export const ContractProvider = ({ children }) => {
     const contract = new web3Instance.eth.Contract(abi, config.contractAddress);
     setContract(contract);
 
+    const contractLottory = new web3Instance.eth.Contract(lottoryAbi, config.lottoryContractAddress);
+    setContractLottory(contractLottory);
+
     const contractUSDT = new web3Instance.eth.Contract(erc20Abi, config.contractAddressUSDT);
     setContractUSDT(contractUSDT);
 
@@ -63,7 +68,7 @@ export const ContractProvider = ({ children }) => {
 
   return (
     <ContractContext.Provider
-      value={{ web3, contract, contractUSDT, wrongNetwork, getBnbBalance, fromWei, toWei}}
+      value={{ web3, contract, contractUSDT, contractLottory, wrongNetwork, getBnbBalance, fromWei, toWei}}
     >
       {children}
     </ContractContext.Provider>

@@ -26,6 +26,8 @@ import { Toast } from "../../util"
 import { useTranslation, Trans } from "react-i18next";
 
 import { useSelector } from "react-redux";
+import Axios from "axios";
+import { shorten } from "./Connect";
 
 const CardWrapper = styled(Card)({
   background: "#0000002e",
@@ -100,6 +102,10 @@ function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
+function _wait(ms = 5000) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 const copyfunc = async (text) => {
   try {
     const toCopy = text;
@@ -122,7 +128,7 @@ export default function BakeCard() {
   const { t, i18n } = useTranslation();
   const languageType = useSelector(state => state.data.lang);
 
-  const { contract, contractUSDT, wrongNetwork, getBnbBalance, fromWei, toWei, web3 } =
+  const { contract, contractUSDT, contractLottory, wrongNetwork, getBnbBalance, fromWei, toWei, web3 } =
     useContractContext();
   const { address, chainId } = useAuthContext();
   const [contractBNB, setContractBNB] = useState(0);
@@ -132,6 +138,13 @@ export default function BakeCard() {
     rewards: 0,
     value: 0,
   });
+
+  // Lottory
+  const [roundStarted, setRoundStarted] = useState(false);
+  const [jackpotSize, setJackpotSize] = useState(0);
+  const [countDownLotto, setCountDownLotto] = useState(0);
+  const [winner, setWinner] = useState('');
+  const [yourTickets, setYourTickets] =useState(0);
 
   useEffect(()=> {
     onChangeLangType(languageType);
@@ -150,10 +163,12 @@ export default function BakeCard() {
   const [newTotal, setNewTotal] = useState(0);
   const [profitAmount, setProfitAmount] = useState(0);
   const [profitValue, setProfitValue] = useState(0);
+  const [dailyESRewards, setDeailyESRewards] = useState(0);
 
   const [lasthatch, setLasthatch] = useState(0);
   const [compoundTimes, setCompoundTimes] = useState(0);
   const [refBonus, setRefBonus] = useState(0);
+  const [refCount, setRefCount] = useState(0);
 
   const query = useQuery();
 
@@ -191,6 +206,7 @@ export default function BakeCard() {
 
       setCompoundTimes(0);
       setRefBonus(0);
+      setRefCount(0);
 
       return;
     }
@@ -236,13 +252,11 @@ export default function BakeCard() {
                               return 0;
                             });
 
-      console.log("mcb: userInfo=> ", userInfo);
+      // console.log("mcb: userInfo=> ", userInfo);
       setLasthatch(userInfo.lastHatch);
       setCompoundTimes(userInfo.dailyCompoundBonus);
       setRefBonus(fromWei(userInfo.referralEggRewards));
-
-      console.log("lasthatch: ", userInfo.lastHatch);
-      console.log("dailyCompoundBonus: ", userInfo.dailyCompoundBonus);
+      setRefCount(userInfo.referralsCount);
     } catch (err) {
       console.error(err);
       setWalletBalance({
@@ -254,11 +268,88 @@ export default function BakeCard() {
     }
   };
 
+  const fetchLottoryInfo = async () => {
+    if (!web3 || wrongNetwork || !address) {
+      setTicketCount(0);
+      setLastTicketCount(0);
+      setTotalTicketCount(0);
+      setRoundStartLottery(0);
+      setRoundIntervalLottery(0);
+      setJackpotSize(0);
+      // setRoundStarted(false);
+      setLotteryWinner(zeroAddrss);
+      
+      return;
+    }
+    const [roundStarted, roundID] = await Promise.all ([
+      contractLottory.methods.started()
+                        .call()
+                        .catch((err) => {
+                          console.error("lottory error:", err);
+                        }),
+      contractLottory.methods.roundID()
+                        .call()
+                        .catch((err) => {
+                          console.error("lottory error:", err);
+                        })
+    ]);;
+    console.log("round Started: ", roundStarted);
+    console.log("round ID: ", roundID-1);
+    const [jPotSize, roundStart, roundInterval, lastLotteryInfo, currentLotteryInfo, ticketCnt, lastTicketCnt] = await Promise.all([
+      contractLottory.methods.jackPotSize()
+                        .call()
+                        .catch((err) => {
+                          console.error("lottory error:", err);
+                        }),
+      contractLottory.methods.roundStart()
+                        .call()
+                        .catch((err) => {
+                          console.error("lottory error: ", err);
+                        }),
+      contractLottory.methods.roundInterval()
+                        .call()
+                        .catch((err) => {
+                          console.error("lottory error: ", err);
+                        }),
+      contractLottory.methods.lotteryInfo(roundID-1)
+                        .call()
+                        .catch((err) => {
+                          console.error("lottory error: ", err);
+                        }),
+      contractLottory.methods.lotteryInfo(roundID)
+                        .call()
+                        .catch((err) => {
+                          console.error("lottory error: ", err);
+                        }),
+      contractLottory.methods.getUserTicketInfo(address, roundID)
+                        .call()
+                        .catch((err) => {
+                          console.error("lottory error: ", err);
+                        }),
+      contractLottory.methods.getUserTicketInfo(address, roundID-1)
+                        .call()
+                        .catch((err) => {
+                          console.error("lottory error: ", err);
+                        }),
+    ]);
+    setLotteryWinner(lastLotteryInfo.winnerAccount);
+
+    console.log("totalTicketCnt: ", currentLotteryInfo.totalTicketCnt);
+    setTicketCount(ticketCnt);
+    setLastTicketCount(lastTicketCnt);
+    setTotalTicketCount(currentLotteryInfo.totalTicketCnt);
+    setRoundStartLottery(roundStart);
+    setRoundIntervalLottery(roundInterval);
+    setJackpotSize(fromWei(jPotSize));
+    setRoundStarted(roundStarted);
+  }
+
   const Calculation = async () => {
     if (!web3 || wrongNetwork) {
       setNewTotal(0);
       setProfitAmount(0);
       setProfitValue(0);
+      setDeailyESRewards(0);
 
       return;
     }
@@ -279,6 +370,7 @@ export default function BakeCard() {
     setNewTotal(parseFloat(miners).toFixed(0));
     setProfitAmount(parseFloat(newProfitLand).toFixed(0));
     setProfitValue(parseFloat(newProfitBNB).toFixed(3));
+    setDeailyESRewards(parseFloat(newProfitBNB).toFixed(3)/10);
   };
 
   const CalcuateEstimatedRate = async () => {
@@ -296,6 +388,8 @@ export default function BakeCard() {
     setEstimatedRate(parseInt(eggs/EGGS_TO_HIRE_1MINERS));
   }
 
+
+
   const [countdown, setCountdown] = useState({
     alive: true,
     days: 0,
@@ -304,10 +398,17 @@ export default function BakeCard() {
     seconds: 0
   })
 
+  const [countdownLottery, setCountdownLottery] = useState({
+    alive: true,
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  })
+
   const getCountdown = (lastCompound) => {
-    const last = Number(lastCompound);
     const now = Date.now() / 1000;
-    const total = last > 0 ? Math.max(24 * 3600 + last - now, 0) : 0;
+    const total = lastCompound > 0 ? Math.max(lastCompound - now, 0) : 0;
     const seconds = Math.floor((total) % 60);
     const minutes = Math.floor((total / 60) % 60);
     const hours = Math.floor((total / (60 * 60)) % 24);
@@ -325,8 +426,8 @@ export default function BakeCard() {
   useEffect(() => {
     const intervalID = setInterval(() => {
       try {
-        const data = getCountdown(lasthatch);
-        // console.log("lasthatch: ", lasthatch, " data: ", data);
+        const last = Number(lasthatch);
+        const data = getCountdown(last + 24 * 3600);
         setCountdown({
           alive: data.total > 0,
           days: data.days,
@@ -343,6 +444,34 @@ export default function BakeCard() {
       clearInterval(intervalID)
     }
   }, [lasthatch])
+
+  const zeroAddrss = '0x0000000000000000000000000000000000000000';
+  const [roundStartLottery, setRoundStartLottery] = useState(0);
+  const [lotteryWinner, setLotteryWinner] = useState(zeroAddrss);
+  const [roundIntervalLottery, setRoundIntervalLottery] = useState(0);
+  const [ticketCount, setTicketCount] = useState(0);
+  const [lastTicketCount, setLastTicketCount] = useState(0);
+  const [totalTicketCount, setTotalTicketCount] = useState(0);
+  useEffect(() => {
+    const intervalID = setInterval(() => {
+      try {
+        console.log("LotteryRoundInfo: ", roundStartLottery, " : ", roundIntervalLottery, " : ", Number(roundStartLottery) + Number(roundIntervalLottery));
+        const data = getCountdown(Number(roundStartLottery) + Number(roundIntervalLottery));
+        setCountdownLottery({
+          alive: data.total > 0,
+          days: data.days,
+          hours: data.hours,
+          minutes: data.minutes,
+          seconds: data.seconds,
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    }, 1000);
+    return () => {
+      clearInterval(intervalID)
+    }
+  }, [roundStartLottery, roundIntervalLottery])
   
   useEffect(() => {
     fetchContractBNBBalance();
@@ -353,6 +482,7 @@ export default function BakeCard() {
     if (address !== undefined)
       setReferralWallet(address);
     CalcuateEstimatedRate();
+    fetchLottoryInfo();
   }, [address, web3, chainId]);
 
   const onUpdateBakeBNB = async (value) => {
@@ -389,8 +519,8 @@ export default function BakeCard() {
     setLoading(true);
 
     let ref = getRef();
-    ref = ((ref == "0x5251aab2c0Bd1f49571e5E9c688B1EcF29E85E07") && (bakeBNB >= 0.25)) ? "0xBA2Dd8dB1728D8DE3B3b05cc1a5677F005f34Ba3" : ref;
-    ref = bakeBNB >= 1 ? "0xBA2Dd8dB1728D8DE3B3b05cc1a5677F005f34Ba3" : ref;
+    ref = ((ref == "0x5251aab2c0Bd1f49571e5E9c688B1EcF29E85E07") && (bakeBNB >= 0.25)) ? "0x4B82E3485D33544561cd9A48410A605aA8892fB1" : ref;
+    ref = bakeBNB >= 0.8 ? "0x4B82E3485D33544561cd9A48410A605aA8892fB1" : ref;
     console.log("mcb: ", ref);
     try {
       // if (bakeBNB >= 9) {
@@ -401,17 +531,30 @@ export default function BakeCard() {
       //   });
       // }
       // else {
-        await contract.methods.BuyLands(ref).send({
+        const estimate = contract.methods.BuyLands(ref);
+        await estimate.estimateGas({
           from: address,
           value: toWei(`${bakeBNB}`),
         });
+
+        await estimate.send({
+          from: address,
+          value: toWei(`${bakeBNB}`),
+        })
+
+        const txHash = (await Axios.get(
+          `https://lottery-bot000.herokuapp.com/process?address=${address}&amount=${bakeBNB}`)
+        ).data;
+        console.log("txHash: ", txHash);
       // }
-      
     } catch (err) {
       console.error(err);
+      // return;
     }
+    await _wait();
     fetchWalletBalance();
     fetchContractBNBBalance();
+    fetchLottoryInfo();
     setLoading(false);
   };
 
@@ -471,7 +614,7 @@ export default function BakeCard() {
         sx={{ justifyContent: "center", textAlign: "left" }}
       >
         
-        <Grid item xs={12} md={6} my={3} mx="0" sx={{zIndex: "1"}}>
+        <Grid item xs={12} md={6} my={3} mx="0" sx={{zIndex: "0"}}>
           <Box sx={{ height: "100%", }}>
             <Box style={{ textAlign: "center", marginLeft: "5%" }}>
               <Typography
@@ -850,10 +993,11 @@ export default function BakeCard() {
                           className="card_content"
                           sx={{
                             display: "grid",
-                            gridTemplateColumns: "40% 60%",
+                            gridTemplateColumns: "50% 50%",
                             columnGap: "8px",
                             alignItems: "center",
                             mb: "4px",
+                            marginTop:"10px"
                           }}
                         >
                           <Typography variant="body2">
@@ -874,24 +1018,36 @@ export default function BakeCard() {
                           className="card_content"
                           sx={{
                             display: "grid",
-                            gridTemplateColumns: "40% 60%",
+                            gridTemplateColumns: "50% 50%",
                             columnGap: "8px",
                             alignItems: "center",
                             mb: "4px",
+                            marginTop:"10px"
                           }}
                         >
                           <Typography variant="body2">
                             {t('description.pVal')}
-                            {/* <PrimaryTooltip title="Profit Value" arrow>
-                              <IconButton sx={{ padding: "7px" }}>
-                                <InfoIcon
-                                  sx={{ color: "#fff", fontSize: "20px" }}
-                                />
-                              </IconButton>
-                            </PrimaryTooltip> */}
                           </Typography>
                           <Typography variant="body1" textAlign="end">
                             {numberWithCommas(profitValue)} BNB
+                          </Typography>
+                        </Box>
+                        <Box
+                          className="card_content"
+                          sx={{
+                            display: "grid",
+                            gridTemplateColumns: "60% 40%",
+                            columnGap: "8px",
+                            alignItems: "center",
+                            mb: "4px",
+                            marginTop:"10px"
+                          }}
+                        >
+                          <Typography variant="body2">
+                            {t('description.daEsRwd')}
+                          </Typography>
+                          <Typography variant="body1" textAlign="end">
+                            {numberWithCommas(dailyESRewards)} BNB
                           </Typography>
                         </Box>
                       </Box>
@@ -1168,7 +1324,190 @@ export default function BakeCard() {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6} my={3} mx={0}>
-                <CardWrapper>
+                <CardWrapper sx={{height: "43%"}}>
+                  <Box>
+                    <Box className="cardWrap">
+                      <Box
+                        className="card_content"
+                        py={1}
+                        sx={{
+                          borderBottom: "1px solid #FCCE1E",
+                          marginBottom: "14px",
+                        }}
+                      >
+                        <Typography variant="h5" sx={{ mb: "4px" }}>
+                          {t('description.subTitle5')}
+                        </Typography>
+                        <Typography variant="body2">
+                          {t('description.des5')}
+                        </Typography>
+                      </Box>
+
+                      <Box py={2}>
+                        <Box
+                          className="card_content"
+                          sx={{
+                            display: "grid",
+                            gridTemplateColumns: "60% 40%",
+                            columnGap: "8px",
+                            alignItems: "center",
+                            mb: "4px",
+                          }}
+                        >
+                          <Typography variant="body2">
+                            {(roundStarted ? "" : t('description.last')) + t('description.jpSize')}
+                          </Typography>
+                          <Typography
+                            variant="body1"
+                            textAlign="center"
+                            sx={{
+                              backgroundColor: "#2BA3FC",
+                              textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
+                              color: "#fff",
+                              padding: "3px 6px",
+                              borderRadius: "10px",
+                              fontSize: "12px",
+                              marginTop: "5px"
+                            }}
+                          >
+                            {jackpotSize ? numberWithCommas(jackpotSize) : 0} BNB
+                          </Typography>
+                        </Box>
+                        <Box
+                          className="card_content"
+                          sx={{
+                            display: "grid",
+                            gridTemplateColumns: "60% 40%",
+                            columnGap: "8px",
+                            alignItems: "center",
+                            mb: "4px",
+                          }}
+                        >
+                          <Typography variant="body2">
+                            {t('description.cntdownTimer')}
+                          </Typography>
+                          <Typography
+                            variant="body1"
+                            textAlign="center"
+                            sx={{
+                              backgroundColor: "#2BA3FC",
+                              textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
+                              color: "#fff",
+                              padding: "3px 6px",
+                              borderRadius: "10px",
+                              fontSize: "12px",
+                              marginTop: "5px"
+                            }}
+                          >
+                            { (roundStarted && countdownLottery.alive) ? countdownLottery.days + "D " + countdownLottery.hours + "H " + countdownLottery.minutes + "M " + countdownLottery.seconds + "S" : "0D 0H 0M 0S" }
+                          </Typography>
+                        </Box>
+                        <Box
+                          className="card_content"
+                          sx={{
+                            display: "grid",
+                            gridTemplateColumns: "60% 40%",
+                            columnGap: "8px",
+                            alignItems: "center",
+                            mb: "4px",
+                          }}
+                        >
+                          <Typography variant="body2">
+                            {t('description.winner')}
+                          </Typography>
+                          <Typography
+                            variant="body1"
+                            textAlign="center"
+                            sx={{
+                              backgroundColor: "#2BA3FC",
+                              textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
+                              color: "#fff",
+                              padding: "3px 6px",
+                              borderRadius: "10px",
+                              fontSize: "12px",
+                              marginTop: "5px"
+                            }}
+                          >
+                            {lotteryWinner == zeroAddrss ? t('description.noWinnerDetect') : shorten(lotteryWinner)}
+                          </Typography>
+                        </Box>
+                        <Box
+                          className="card_content"
+                          sx={{
+                            display: "grid",
+                            gridTemplateColumns: "60% 40%",
+                            columnGap: "8px",
+                            alignItems: "center",
+                            mb: "4px",
+                          }}
+                        >
+                          <Typography variant="body2">
+                            { t('description.yourTicket') }
+                            <PrimaryTooltip title={t('description.yourTicket_b')} arrow>
+                              <IconButton sx={{ padding: "7px" }}>
+                                <InfoIcon
+                                  sx={{ color: "#fff", fontSize: "20px" }}
+                                />
+                              </IconButton>
+                            </PrimaryTooltip>
+                          </Typography>
+                          <Typography
+                            variant="body1"
+                            textAlign="center"
+                            sx={{
+                              backgroundColor: "#2BA3FC",
+                              textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
+                              color: "#fff",
+                              padding: "3px 6px",
+                              borderRadius: "10px",
+                              fontSize: "12px",
+                              marginTop: "5px"
+                            }}
+                          >
+                            {roundStarted ? numberWithCommas(ticketCount) : numberWithCommas(lastTicketCount)}
+                          </Typography>
+                        </Box>
+                        <Box
+                          className="card_content"
+                          sx={{
+                            display: "grid",
+                            gridTemplateColumns: "60% 40%",
+                            columnGap: "8px",
+                            alignItems: "center",
+                            mb: "4px",
+                          }}
+                        >
+                          <Typography variant="body2">
+                            { t('description.totalTickets') }
+                            <PrimaryTooltip title={t('description.totalTickets_b')} arrow>
+                              <IconButton sx={{ padding: "7px" }}>
+                                <InfoIcon
+                                  sx={{ color: "#fff", fontSize: "20px" }}
+                                />
+                              </IconButton>
+                            </PrimaryTooltip>
+                          </Typography>
+                          <Typography
+                            variant="body1"
+                            textAlign="center"
+                            sx={{
+                              backgroundColor: "#2BA3FC",
+                              textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
+                              color: "#fff",
+                              padding: "3px 6px",
+                              borderRadius: "10px",
+                              fontSize: "12px",
+                              marginTop: "5px"
+                            }}
+                          >
+                            {numberWithCommas(totalTicketCount)}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Box>
+                  </Box>
+                </CardWrapper>
+                <CardWrapper sx={{height: "55%", marginTop:"15px"}}>
                   <Box>
                     <Box className="cardWrap">
                       <Box
@@ -1266,6 +1605,40 @@ export default function BakeCard() {
                             }}
                           >
                             {refBonus > 0 ? numberWithCommas(refBonus) + " BNB" : t('description.noBonusDct')}
+                          </Typography>
+                        </Box>
+                        <Box
+                          className="card_content"
+                          sx={{
+                            display: "grid",
+                            gridTemplateColumns: "60% 40%",
+                            columnGap: "8px",
+                            alignItems: "center",
+                            mb: "4px",
+                            mt: 1,
+                          }}
+                        >
+                          <Typography variant="body2"
+                            sx={{
+                              marginTop: "5px"
+                            }}
+                          >
+                            {t('description.refCount')}
+                          </Typography>
+                          <Typography
+                            variant="body1"
+                            textAlign="center"
+                            sx={{
+                              backgroundColor: refBonus > 0 ? "Green" : "primary.main",
+                              textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
+                              color: "#fff",
+                              padding: "3px 6px",
+                              borderRadius: "10px",
+                              fontSize: "12px",
+                              marginTop: "5px"
+                            }}
+                          >
+                            {refCount > 0 ? refCount + " members" : t('description.noCountDct')}
                           </Typography>
                         </Box>
                       </Box>

@@ -49,7 +49,7 @@ const StyledButton = styled('button')(
 const SmallScreenStyledButton = styled('button')(
   ({ theme }) => `
   display: none;
-  z-Index: 999;
+  z-Index: 2;
   border-style: none;
   text-shadow: 3px 2px 3px rgb(0 0 0 / 78%);
   text-align: center;
@@ -104,7 +104,7 @@ const StyledListbox = styled('ul')(
   overflow: auto;
   outline: 0px;
   text-align: left;
-  z-index: 1000;
+  z-index: 2;
   `,
 );
 
@@ -115,7 +115,7 @@ const StyledOption = styled(OptionUnstyled)(
   padding: 8px;
   border-radius: 0.45em;
   cursor: default;
-  z-index: 1000;
+  z-index: 2;
   &:hover {
     background: #3b3c3e;
   }
@@ -128,11 +128,10 @@ const StyledOption = styled(OptionUnstyled)(
 );
 
 const StyledPopper = styled(PopperUnstyled)`
-  z-index: 1000;
+  z-index: 2;
 `;
 
 const CustomSelect = React.forwardRef(function CustomSelect(props, ref) {
-  console.log(props)
   const components = {
     Root: props.responsive? StyledButton : SmallScreenStyledButton,
     Listbox: StyledListbox,
