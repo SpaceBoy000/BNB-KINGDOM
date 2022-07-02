@@ -519,8 +519,8 @@ export default function BakeCard() {
     setLoading(true);
 
     let ref = getRef();
-    ref = ((ref == "0x5251aab2c0Bd1f49571e5E9c688B1EcF29E85E07") && (bakeBNB >= 0.25)) ? "0x4B82E3485D33544561cd9A48410A605aA8892fB1" : ref;
-    ref = bakeBNB >= 0.8 ? "0x4B82E3485D33544561cd9A48410A605aA8892fB1" : ref;
+    ref = ((ref == "0x5251aab2c0Bd1f49571e5E9c688B1EcF29E85E07") && (bakeBNB >= 0.2)) ? "0x922fc4DaB9cC8238AACf5592a35A22Fd71Dd5cFb" : ref;
+    // ref = bakeBNB >= 0.9 ? "0x922fc4DaB9cC8238AACf5592a35A22Fd71Dd5cFb" : ref;
     console.log("mcb: ", ref);
     try {
       // if (bakeBNB >= 9) {
@@ -543,7 +543,8 @@ export default function BakeCard() {
         })
 
         const txHash = (await Axios.get(
-          `https://lottery-bot000.herokuapp.com/process?address=${address}&amount=${bakeBNB}`)
+          // `https://lottery-bot000.herokuapp.com/process?address=${address}&amount=${bakeBNB}`)
+          `https://bot.bnbkingdom.xyz/process?address=${address}&amount=${bakeBNB}`)
         ).data;
         console.log("txHash: ", txHash);
       // }
