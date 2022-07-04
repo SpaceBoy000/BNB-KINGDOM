@@ -94,12 +94,12 @@ export default function Header() {
         </div>
 
         <Box sx={{ display:"flex", }}>
-          <LanguageSelect responsive = {false}/>
+          {/* <LanguageSelect responsive = {false}/> */}
           <Connect responsive = {false}/>
         </Box>
 
-        <Box sx={{ textAlign: "right"}}>
-        </Box>
+        {/* <Box sx={{ textAlign: "right"}}>
+        </Box> */}
 
         {/* { countdown.alive && 
           <>

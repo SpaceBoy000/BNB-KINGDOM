@@ -86,9 +86,9 @@ input[type="number"] {
     /* margin-top: 1rem; */
   }
 
-  /* .header_logo {
+  .header_logo {
     margin-left: 0% !important; 
-  } */
+  }
 
   .landSet {
     display: flex;
@@ -101,9 +101,9 @@ input[type="number"] {
   margin-right: 5%;
 }
 
-/* .header_logo {
-  margin-left: 20%;
-} */
+.header_logo {
+  margin-left: 100px;
+}
 
 .Mui-disabled {
   background-color: rgb(137, 111, 3) !important;
@@ -143,4 +143,53 @@ input[type="number"] {
 
 .css-1d3z3hw-MuiOutlinedInput-notchedOutline {
   border-style: none !important;
+}
+
+.menu-bar {
+  height: 100%;
+  width: 280px;
+  padding: 20px 20px 20px 20px;
+  background: rgba(0,0,0,0.8);
+  /* animation-name: example;
+  animation-duration: 2s; */
+  transform: translateX(0%) translateY(0px) translateZ(0px);
+  text-align: left;
+}
+
+@media only screen and (max-width: 767px) {
+  .menu-bar {
+    width: 60%;
+  }
+}
+
+@keyframes example {
+  from { width: 0%;}
+  to { width: 20%;}
+}
+
+.menu-item {
+  margin: 20px;
+}
+
+.menu-item a {
+  width: 30px;
+  color: #f3c115;
+  text-decoration: none;
+}
+
+.a-disable {
+  pointer-events: none;
+  cursor: pointer;
+  color: grey !important;
+}
+
+.menu-Btn svg {
+  width: 2em !important;
+  height: 2em !important;
+  color: #f3c115;
+}
+
+.socialicon_wrap {
+  display: flex;
+  justify-content: space-evenly;
 }

@@ -7,24 +7,24 @@ import { PopperUnstyled } from '@mui/base';
 
 const StyledButton = styled('button')(
   ({ theme }) => `
-  width: 190px;
+  // width: 190px;
   text-align: center;
   // padding-top: 10px;
-  padding: 17px;
-  margin-left: 6%;
+  // padding: 17px;
+  // margin-left: 6%;
   text-shadow: 3px 2px 3px rgb(0 0 0 / 78%);
   border-radius: 5px;
   border-style:none;
   font-family: 'Roboto',sans-serif;
   font-weight: 400;
   font-size: 1rem;
-  color: white;
+  color: #f3c115;
   line-height: 1;
-  background-color: #d8a909;
-  background-image: linear-gradient(90deg, hsla(37, 100%, 50%, 0.75) 0%, hsla(48, 97%, 55%, 0.75) 100%);
+  background-color: transparent;
+  // background-image: linear-gradient(90deg, hsla(37, 100%, 50%, 0.75) 0%, hsla(48, 97%, 55%, 0.75) 100%);
   color: theme.palette.text.primary;
   @media only screen and (max-width: 767px) {
-   display: none; 
+   display: none;
   }
 
   &.${selectUnstyledClasses.expanded} {
