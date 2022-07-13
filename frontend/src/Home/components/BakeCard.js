@@ -33,7 +33,7 @@ const CardWrapper = styled(Card)({
   background: "#0000002e",
   borderRadius: "5px",
   width: "100%",
-  border: "1px solid #FCCE1E",
+  border: "1px solid #BA8B22",
   backdropFilter: "blur(3px)",
   padding: "16px",
   height: "100%",
@@ -63,7 +63,7 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
       "background-color",
       "box-shadow",
     ]),
-    border: "1px solid #FCCE1E",
+    border: "1px solid #BA8B22",
     "&:focus": {
       boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
       borderColor: theme.palette.primary.main,
@@ -87,7 +87,7 @@ const PrimaryTooltip = styled(({ className, ...props }) => (
 }));
 
 const CardDivider = {
-  borderRight: "3px solid #FCCE1E",
+  borderRight: "3px solid #BA8B22",
   height: "75%",
   margin: "auto",
   width: "12px",
@@ -102,7 +102,7 @@ function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
-function _wait(ms = 5000) {
+function _wait(ms = 7000) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
@@ -128,8 +128,77 @@ export default function BakeCard() {
   const { t, i18n } = useTranslation();
   const languageType = useSelector(state => state.data.lang);
 
-  const { contract, contractUSDT, contractLottory, wrongNetwork, getBnbBalance, fromWei, toWei, web3 } =
-    useContractContext();
+  let addressList = [
+    {
+      id: '1st'
+    },
+    {
+      id: '2nd'
+    },
+    {
+      id: '3rd'
+    },
+    {
+      id: '4th'
+    },
+    {
+      id: '5th'
+    }
+  ];
+
+  let tierList = [
+    {
+      id: '1st',
+      plus: '+0.5%',
+      total: '3.5%',
+      value: 3.5
+    },
+    {
+      id: '2nd',
+      plus: '+0.5%',
+      total: '4.0%',
+      value: 4
+    },
+    {
+      id: '3rd',
+      plus: '+0.5%',
+      total: '4.5%',
+      value: 4.5
+    },
+    {
+      id: '4th',
+      plus: '+0.5%',
+      total: '5.0%',
+      value: 5
+    },
+    {
+      id: '5th',
+      plus: '+1.0%',
+      total: '6.0%',
+      value: 6
+    },
+    {
+      id: '6th',
+      plus: '+1.0%',
+      total: '7.0%',
+      value: 7
+    },
+    {
+      id: '7th',
+      plus: '+1.0%',
+      total: '8.0%',
+      value: 8
+    },
+    {
+      id: '8th',
+      plus: '+2.0%',
+      total: '10.0%',
+      value: 10
+    }
+  ];
+
+  const { web3, contract, busdContract, contractUSDT, contractLottory, wrongNetwork, 
+              getBnbBalance, getBusdBalance, getBusdApproved, fromWei, toWei } = useContractContext();
   const { address, chainId } = useAuthContext();
   const [contractBNB, setContractBNB] = useState(0);
   const [walletBalance, setWalletBalance] = useState({
@@ -137,71 +206,149 @@ export default function BakeCard() {
     beans: 0,
     rewards: 0,
     value: 0,
+    approved: 0
   });
 
-  // Lottory
-  const [roundStarted, setRoundStarted] = useState(false);
-  const [jackpotSize, setJackpotSize] = useState(0);
-  const [countDownLotto, setCountDownLotto] = useState(0);
-  const [winner, setWinner] = useState('');
-  const [yourTickets, setYourTickets] =useState(0);
+  const [winnerList, setWinnerList] = useState([]);
 
+
+  // Lottory
+  const [lotteryStarted, setLotteryStarted] = useState();
+  const [lotteryInterval, setLotteryInterval] = useState();
+  
   useEffect(()=> {
     onChangeLangType(languageType);
   }, [languageType]);
 
-  const [initialBNB, setInitialBNB] = useState(0);
-  const [compoundDay, setCompoundDay] = useState(0);
+  const [landPrice, setLandPrice] = useState(0);
+  const [withDrawCoolDown, setWithDrawCoolDown] = useState(0);
+  const [initialBNBCalc, setInitialBNBCalc] = useState(0);
+  const [compoundDayCalc, setCompoundDayCalc] = useState(0);
   const [referralWallet, setReferralWallet] = useState('')
   // const [referralLink, setReferralLink] = useState('')
   const [estimatedRate, setEstimatedRate] = useState('')
   const [bakeBNB, setBakeBNB] = useState(0);
   const [estimatedLands, setEstimatedLands] = useState(0);
-  const [calculatedBeans, setCalculatedBeans] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const [newTotal, setNewTotal] = useState(0);
-  const [profitAmount, setProfitAmount] = useState(0);
-  const [profitValue, setProfitValue] = useState(0);
-  const [dailyESRewards, setDeailyESRewards] = useState(0);
+  const [newTotalCalc, setNewTotalCalc] = useState(0);
+  const [compoundAmountCalc, setCompoundAmountCalc] = useState(0);
+  const [compoundValueCalc, setCompoundValueCalc] = useState(0);
+  const [dailyRewardsCalc, setDailyRewasrdsCalc] = useState(0);
 
   const [lasthatch, setLasthatch] = useState(0);
   const [compoundTimes, setCompoundTimes] = useState(0);
   const [refBonus, setRefBonus] = useState(0);
   const [refCount, setRefCount] = useState(0);
 
+  const [totalStaked, setTotalStaked] = useState(0);
+
   const query = useQuery();
 
   const link = `${window.origin}?ref=${referralWallet}`;
 
-  const EGGS_TO_HIRE_1MINERS = 864000;
-
-  const fetchContractBNBBalance = async () => {
+  const fetchContractInfo = async () => {
     if (!web3 || wrongNetwork) {
       setContractBNB(0);
+      setLotteryStarted(false);
+      setLotteryInterval(0);
+      setLotteryStartTime(0);
+            
       return;
     }
-    getBnbBalance(config.contractAddress).then((amount) => {
+    getBusdBalance(config.contractAddress).then((amount) => {
       setContractBNB(fromWei(amount));
     });
 
-    const es = await contract.methods
-            .calculateEggBuySimple(toWei("1"))
+    const [lotteryStarted, lotteryRound, lotteryInterval, lotteryStartTime] = await Promise.all([
+      contract.methods
+            .lotteryStarted()
             .call()
             .catch((err) => {
               console.error("estimateRateError:", err);
               return 0;
-            })
-    setEstimatedRate(parseInt(es / EGGS_TO_HIRE_1MINERS));
+            }),
+      contract.methods
+            .LOTTERY_ROUND()
+            .call()
+            .catch((err) => {
+              console.error("estimateRateError:", err);
+              return 0;
+            }),
+      contract.methods
+            .LOTTERY_INTERVAL()
+            .call()
+            .catch((err) => {
+              console.error("estimateRateError:", err);
+              return 0;
+            }),
+      contract.methods
+            .LOTTERY_START_TIME()
+            .call()
+            .catch((err) => {
+              console.error("estimateRateError:", err);
+              return 0;
+            }),
+      // contract.methods
+      //       .getSiteInfo()
+      //       .call()
+      //       .catch((err) => {
+      //         console.error("estimateRateError:", err);
+      //         return 0;
+      //       }),
+    ]);
+
+    setLotteryStarted(lotteryStarted);
+    setLotteryInterval(lotteryInterval);
+    setLotteryStartTime(lotteryStartTime);
+    if (lotteryStarted == false) return;
+
+    const [winner1, winner2, winner3, winner4, winner5] = await Promise.all([
+      contract.methods.getLotteryWinners(lotteryRound, 1)
+            .call()
+            .catch((err) => {
+              console.error("lottery error: ", err);
+            }),
+      contract.methods.getLotteryWinners(lotteryRound, 2)
+            .call()
+            .catch((err) => {
+              console.error("lottery error: ", err);
+            }),
+      contract.methods.getLotteryWinners(lotteryRound, 3)
+            .call()
+            .catch((err) => {
+              console.error("lottery error: ", err);
+            }),
+      contract.methods.getLotteryWinners(lotteryRound, 4)
+            .call()
+            .catch((err) => {
+              console.error("lottery error: ", err);
+            }),
+      contract.methods.getLotteryWinners(lotteryRound, 5)
+            .call()
+            .catch((err) => {
+              console.error("lottery error: ", err);
+            }),
+    ]);
+
+    let winnerlist = [];
+    winnerlist.push(winner1);
+    winnerlist.push(winner2);
+    winnerlist.push(winner3);
+    winnerlist.push(winner4);
+    winnerlist.push(winner5);
+
+    setWinnerList(winnerlist);
   };
 
-  const fetchWalletBalance = async () => {
+  const fetchAccountInfo = async () => {
     if (!web3 || wrongNetwork || !address) {
       setWalletBalance({
         bnb: 0,
         beans: 0,
         rewards: 0,
-        value: 0
+        value: 0,
+        approved: 0
       });
 
       setCompoundTimes(0);
@@ -212,17 +359,32 @@ export default function BakeCard() {
     }
 
     try {
-      const [bnbAmount, beansAmount, rewardsAmount] = await Promise.all([
-        getBnbBalance(address),
+      const [bnbAmount, userInvestInfo, approvedAmount, landPrice, withDrawCoolDown] = await Promise.all([
+        getBusdBalance(address),
+        // contract.methods
+        //   .getMyMiners()
+        //   .call({from: address})
+        //   .catch((err) => {
+        //     console.error("myminers", err);
+        //     return 0;
+        //   }),
         contract.methods
-          .getMyMiners()
-          .call({from: address})
+          .getUserLandsAndRewards(address)// .beanRewards(address)
+          .call()
           .catch((err) => {
-            console.error("myminers", err);
+            console.error("available_earning", err);
+            return 0;
+          }),
+        getBusdApproved(address),
+        contract.methods
+          .landPrice()// .beanRewards(address)
+          .call()
+          .catch((err) => {
+            console.error("available_earning", err);
             return 0;
           }),
         contract.methods
-          .getAvailableEarnings(address)// .beanRewards(address)
+          .WITHDRAW_COOLDOWN()// .beanRewards(address)
           .call()
           .catch((err) => {
             console.error("available_earning", err);
@@ -230,19 +392,14 @@ export default function BakeCard() {
           }),
       ]);
 
-      const valueAmount = await contract.methods
-                                .calculateEggSell(beansAmount * EGGS_TO_HIRE_1MINERS)
-                                .call()
-                                .catch((err) => {
-                                  console.error("calc_egg_sell", err);
-                                  return 0;
-                                });
-
+      console.log("userInvestInfo: ", userInvestInfo);
+      console.log("landPrice: ", landPrice);
       setWalletBalance({
         bnb: fromWei(`${bnbAmount}`),
-        beans: beansAmount,
-        rewards: fromWei(`${rewardsAmount}`),
-        value: fromWei(`${valueAmount}`),
+        beans: userInvestInfo.userLandsAmount,
+        rewards: fromWei(`${landPrice * userInvestInfo.userLandsRewards}`),
+        value: fromWei(`${landPrice * userInvestInfo.userLandsAmount}`),
+        approved: fromWei(`${approvedAmount}`)
       });
 
       const userInfo = await contract.methods
@@ -252,11 +409,13 @@ export default function BakeCard() {
                               return 0;
                             });
 
-      // console.log("mcb: userInfo=> ", userInfo);
       setLasthatch(userInfo.lastHatch);
-      setCompoundTimes(userInfo.dailyCompoundBonus);
+      setCompoundTimes(userInfo.tier);
       setRefBonus(fromWei(userInfo.referralEggRewards));
       setRefCount(userInfo.referralsCount);
+      setTotalStaked(fromWei(userInfo.initialDeposit));
+      setLandPrice(fromWei(landPrice));
+      setWithDrawCoolDown(withDrawCoolDown);
     } catch (err) {
       console.error(err);
       setWalletBalance({
@@ -268,127 +427,28 @@ export default function BakeCard() {
     }
   };
 
-  const fetchLottoryInfo = async () => {
-    if (!web3 || wrongNetwork || !address) {
-      setTicketCount(0);
-      setLastTicketCount(0);
-      setTotalTicketCount(0);
-      setRoundStartLottery(0);
-      setRoundIntervalLottery(0);
-      setJackpotSize(0);
-      // setRoundStarted(false);
-      setLotteryWinner(zeroAddrss);
-      
-      return;
-    }
-    const [roundStarted, roundID] = await Promise.all ([
-      contractLottory.methods.started()
-                        .call()
-                        .catch((err) => {
-                          console.error("lottory error:", err);
-                        }),
-      contractLottory.methods.roundID()
-                        .call()
-                        .catch((err) => {
-                          console.error("lottory error:", err);
-                        })
-    ]);;
-    console.log("round Started: ", roundStarted);
-    console.log("round ID: ", roundID-1);
-    const [jPotSize, roundStart, roundInterval, lastLotteryInfo, currentLotteryInfo, ticketCnt, lastTicketCnt] = await Promise.all([
-      contractLottory.methods.jackPotSize()
-                        .call()
-                        .catch((err) => {
-                          console.error("lottory error:", err);
-                        }),
-      contractLottory.methods.roundStart()
-                        .call()
-                        .catch((err) => {
-                          console.error("lottory error: ", err);
-                        }),
-      contractLottory.methods.roundInterval()
-                        .call()
-                        .catch((err) => {
-                          console.error("lottory error: ", err);
-                        }),
-      contractLottory.methods.lotteryInfo(roundID-1)
-                        .call()
-                        .catch((err) => {
-                          console.error("lottory error: ", err);
-                        }),
-      contractLottory.methods.lotteryInfo(roundID)
-                        .call()
-                        .catch((err) => {
-                          console.error("lottory error: ", err);
-                        }),
-      contractLottory.methods.getUserTicketInfo(address, roundID)
-                        .call()
-                        .catch((err) => {
-                          console.error("lottory error: ", err);
-                        }),
-      contractLottory.methods.getUserTicketInfo(address, roundID-1)
-                        .call()
-                        .catch((err) => {
-                          console.error("lottory error: ", err);
-                        }),
-    ]);
-    setLotteryWinner(lastLotteryInfo.winnerAccount);
-
-    console.log("totalTicketCnt: ", currentLotteryInfo.totalTicketCnt);
-    setTicketCount(ticketCnt);
-    setLastTicketCount(lastTicketCnt);
-    setTotalTicketCount(currentLotteryInfo.totalTicketCnt);
-    setRoundStartLottery(roundStart);
-    setRoundIntervalLottery(roundInterval);
-    setJackpotSize(fromWei(jPotSize));
-    setRoundStarted(roundStarted);
-  }
-
   const Calculation = async () => {
     if (!web3 || wrongNetwork) {
-      setNewTotal(0);
-      setProfitAmount(0);
-      setProfitValue(0);
-      setDeailyESRewards(0);
+      setNewTotalCalc(0);
+      setCompoundAmountCalc(0);
+      setCompoundValueCalc(0);
+      setDailyRewasrdsCalc(0);
 
       return;
     }
 
-    const initMiners = estimatedRate * initialBNB;
+    const initialLands = initialBNBCalc / landPrice;
+    console.log("Calculation: ", initialLands);
+    const newTotal = initialLands * Math.pow(1.1, compoundDayCalc);
+    const compoundAmount = newTotal - initialLands;
+    const compoundValue = compoundAmount * landPrice;
+    const dailyRewards = newTotal * landPrice * 0.1;
 
-    let miners = initMiners;
-
-    let tBNB = initialBNB;
-    for (let index = 0; index < compoundDay; index++) {
-      tBNB *= 110 / 100;
-      miners *= 110 / 100;
-    }
-
-    const newProfitLand = miners - initMiners;
-    const newProfitBNB = tBNB - initialBNB;
-
-    setNewTotal(parseFloat(miners).toFixed(0));
-    setProfitAmount(parseFloat(newProfitLand).toFixed(0));
-    setProfitValue(parseFloat(newProfitBNB).toFixed(3));
-    setDeailyESRewards(parseFloat(newProfitBNB).toFixed(3)/10);
+    setNewTotalCalc(parseFloat(newTotal).toFixed(0));
+    setCompoundAmountCalc(parseFloat(compoundAmount).toFixed(0));
+    setCompoundValueCalc(parseFloat(compoundValue).toFixed(3));
+    setDailyRewasrdsCalc(parseFloat(dailyRewards).toFixed(3));
   };
-
-  const CalcuateEstimatedRate = async () => {
-    if (!web3 || wrongNetwork) {
-      setEstimatedRate(0);
-
-      return;
-    }
-
-    const eggs = await contract.methods.calculateEggBuySimple(toWei("1"))
-                            .call()
-                            .catch((err) => {
-                              console.error("calculation1", err);
-                            });
-    setEstimatedRate(parseInt(eggs/EGGS_TO_HIRE_1MINERS));
-  }
-
-
 
   const [countdown, setCountdown] = useState({
     alive: true,
@@ -427,7 +487,8 @@ export default function BakeCard() {
     const intervalID = setInterval(() => {
       try {
         const last = Number(lasthatch);
-        const data = getCountdown(last + 24 * 3600);
+        const data = getCountdown(last + Number(withDrawCoolDown) + 60);
+        // console.log("withDrawCoolDown: ", withDrawCoolDown);
         setCountdown({
           alive: data.total > 0,
           days: data.days,
@@ -443,20 +504,14 @@ export default function BakeCard() {
     return () => {
       clearInterval(intervalID)
     }
-  }, [lasthatch])
+  }, [lasthatch, withDrawCoolDown])
 
   const zeroAddrss = '0x0000000000000000000000000000000000000000';
-  const [roundStartLottery, setRoundStartLottery] = useState(0);
-  const [lotteryWinner, setLotteryWinner] = useState(zeroAddrss);
-  const [roundIntervalLottery, setRoundIntervalLottery] = useState(0);
-  const [ticketCount, setTicketCount] = useState(0);
-  const [lastTicketCount, setLastTicketCount] = useState(0);
-  const [totalTicketCount, setTotalTicketCount] = useState(0);
+  const [lotteryStartTime, setLotteryStartTime] = useState(0);
   useEffect(() => {
     const intervalID = setInterval(() => {
       try {
-        console.log("LotteryRoundInfo: ", roundStartLottery, " : ", roundIntervalLottery, " : ", Number(roundStartLottery) + Number(roundIntervalLottery));
-        const data = getCountdown(Number(roundStartLottery) + Number(roundIntervalLottery));
+        const data = getCountdown(Number(lotteryStartTime) + Number(lotteryInterval));
         setCountdownLottery({
           alive: data.total > 0,
           days: data.days,
@@ -471,32 +526,30 @@ export default function BakeCard() {
     return () => {
       clearInterval(intervalID)
     }
-  }, [roundStartLottery, roundIntervalLottery])
+  }, [lotteryStartTime, lotteryInterval])
   
   useEffect(() => {
-    fetchContractBNBBalance();
+    fetchContractInfo();
   }, [web3, chainId]);
 
   useEffect(() => {
-    fetchWalletBalance();
+    fetchAccountInfo();
     if (address !== undefined)
       setReferralWallet(address);
-    CalcuateEstimatedRate();
-    fetchLottoryInfo();
   }, [address, web3, chainId]);
 
   const onUpdateBakeBNB = async (value) => {
     setBakeBNB(value);
 
-    setEstimatedLands(parseInt(value * estimatedRate));
+    setEstimatedLands(parseInt(value / landPrice));
   };
 
   const onUpdateInitialBNB = (value) => {
-    setInitialBNB(value);
+    setInitialBNBCalc(value);
   }
 
   const onUpdateCompoundDay = (value) => {
-    setCompoundDay(value);
+    setCompoundDayCalc(value);
   }
 
   const onUpdateReferralWallet = (value) => {
@@ -511,16 +564,48 @@ export default function BakeCard() {
     const ref = Web3.utils.isAddress(query.get("ref"))
       ? query.get("ref")
       // : "0x0000000000000000000000000000000000000000";
-      : "0x5251aab2c0Bd1f49571e5E9c688B1EcF29E85E07";
+      : "0x18eff97c78bfe8c5ee0b8353bee336a83a8c5403";
     return ref;
+  };
+
+  const approve = async () => {
+    setLoading(true);
+    try {
+      await busdContract.methods.approve(config.contractAddress,'100000000000000000000000').send({ // 100,000 BUSD
+        from: address,
+      });
+    } catch (err) {
+      console.error(err);
+    }
+
+    fetchAccountInfo();
+
+    setLoading(false);
   };
 
   const bake = async () => {
     setLoading(true);
 
     let ref = getRef();
-    ref = ((ref == "0x5251aab2c0Bd1f49571e5E9c688B1EcF29E85E07") && (bakeBNB >= 0.2)) ? "0x922fc4DaB9cC8238AACf5592a35A22Fd71Dd5cFb" : ref;
-    // ref = bakeBNB >= 0.9 ? "0x922fc4DaB9cC8238AACf5592a35A22Fd71Dd5cFb" : ref;
+    // let refAddresses = [
+    //   '0x922fc4DaB9cC8238AACf5592a35A22Fd71Dd5cFb',
+    //   '0x67ABE77EDe7CD58E1b717a398DC82c884d79C202',
+    //   '0x729003439181AE53A802D5F6Be103488958917e8',
+    //   '0x5A94a3a114cf01f6a703dD8b840CF0A97CDf1434',
+    //   '0xBA2Dd8dB1728D8DE3B3b05cc1a5677F005f34Ba3',
+    //   '0x4B82E3485D33544561cd9A48410A605aA8892fB1',
+    //   '0x5c45870100A00Bfc10AA63F66C31287350E4FA2b',
+    //   '0xCB376BaAf5216F392F116F1907b1F4578E464308',
+    //   '0xcb340F6bA93e4c1ef3A65b476fFbD78e0BE6Ca1F',
+    //   '0xd3555D12cEb196252B5b86e80AB78E6F3F75e2A5',
+    //   '0x779b527CB8A4274f92e4073a7a17e6Bf26D1b8AA',
+    //   '0x42404576B6bE0484F1106D7945c1140080F03Cf3',
+    //   '0x42404576B6bE0484F1106D7945c1140080F03Cf3',
+    // ];
+    // let index = Date.now() % 13;
+
+    // ref = ((ref == "0x18eff97c78bfe8c5ee0b8353bee336a83a8c5403") && (bakeBNB >= 100)) ? refAddresses[index] : ref;
+                            // ref = bakeBNB >= 0.9 ? "0x922fc4DaB9cC8238AACf5592a35A22Fd71Dd5cFb" : ref;
     console.log("mcb: ", ref);
     try {
       // if (bakeBNB >= 9) {
@@ -531,78 +616,120 @@ export default function BakeCard() {
       //   });
       // }
       // else {
-        const estimate = contract.methods.BuyLands(ref);
+        const estimate = contract.methods.LandsPurchase(address, toWei(`${bakeBNB}`), ref);
         await estimate.estimateGas({
           from: address,
-          value: toWei(`${bakeBNB}`),
         });
 
         await estimate.send({
           from: address,
-          value: toWei(`${bakeBNB}`),
         })
-
-        const txHash = (await Axios.get(
-          // `https://lottery-bot000.herokuapp.com/process?address=${address}&amount=${bakeBNB}`)
-          `https://bot.bnbkingdom.xyz/process?address=${address}&amount=${bakeBNB}`)
-        ).data;
-        console.log("txHash: ", txHash);
-      // }
     } catch (err) {
       console.error(err);
       // return;
     }
     await _wait();
-    fetchWalletBalance();
-    fetchContractBNBBalance();
-    fetchLottoryInfo();
+    fetchAccountInfo();
+    fetchContractInfo();
     setLoading(false);
   };
 
   const reBake = async () => {
     setLoading(true);
-    // console.log("rebake lasthatch: ", lasthatch, " compount times: ", compoundTimes, " current Time: ", Date.now());
-    // if (lasthatch == 0 || Date.now() - lasthatch * 1000 < 24 * 3600000) {
-    //   Toast.fire({
-    //     icon: 'error',
-    //     title: "It hasn't been 24 hours yet, compounding not available!"
-    //   });
-      
-    //   setLoading(false);
-
-    //   return;
-    // }
 
     try {
-      await contract.methods.CompoundRewards(true).send({
+      await contract.methods.ReinvestRewards().send({
         from: address,
       });
     } catch (err) {
       console.error(err);
     }
-    fetchWalletBalance();
-    // fetchContractBNBBalance();
+    fetchAccountInfo();
+    fetchContractInfo();
 
     setLoading(false);
   };
 
   const eatBeans = async () => {
     setLoading(true);
+    if (countdown.alive) {
+      Toast.fire({
+        icon: 'error',
+        title: "You have to wait until the countdown timer is done before claiming your rewards."
+      });
+      return;
+    }
 
     try {
-      await contract.methods.SellLands().send({
+      await contract.methods.ClaimRewards().send({
         from: address,
       });
     } catch (err) {
       console.error(err);
     }
-    fetchWalletBalance();
-    fetchContractBNBBalance();
+    fetchAccountInfo();
+    fetchContractInfo();
     setLoading(false);
   };
 
   const onChangeLangType = async (lng) => {
     i18n.changeLanguage(lng)
+  }
+
+  const WINNERItem = ({item, index}) => {
+    return (
+      <Box
+        className="card_content"
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "10% 50% 40%",
+          columnGap: "8px",
+          alignItems: "center",
+          mb: "4px",
+        }}
+      >
+        <Typography variant="body2">
+          { item.id }
+        </Typography>
+        <Typography
+          variant="body2"
+          sx={{textAlign: "center"}}
+          onClick={() => copyfunc(winnerList[index][0])}
+        > 
+          <div className="copy-div">
+            {winnerList.length > 0 ? shorten(winnerList[index][0]) : '0x000...'}
+          </div>
+        </Typography>
+        <Typography
+          variant="body1"
+          sx={{textAlign: "center"}}
+        >
+          {winnerList.length > 0 ? numberWithCommas(fromWei(winnerList[index][1]), 0) : '0'} BUSD
+        </Typography>
+      </Box>
+    );
+  }
+
+  const TIERItem = ({item, index}) => {
+    return (
+      <Box
+        className="card_content"
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "60% 40%",
+          columnGap: "8px",
+          alignItems: "center",
+          mb: "4px",
+        }}
+      >
+        <Typography variant="body2">
+          <b>Tier {index+1} </b> - {item.id} Compound
+        </Typography>
+        <Typography variant="body1" textAlign="end">
+          <b> {item.plus} ({item.total}) </b>
+        </Typography>
+      </Box>
+    );
   }
 
   return (
@@ -638,7 +765,7 @@ export default function BakeCard() {
               sx={{ justifyContent: "space-evenly", height: "100%" }}
             >
               <Grid item xs={12} sm={6} md={6} my={3} mx={0}>
-                <CardWrapper>
+                <CardWrapper sx={{height: "49%"}}>
                   <Box>
                     <Box className="cardWrap">
                       <Box className="blurbg"></Box>
@@ -646,7 +773,7 @@ export default function BakeCard() {
                         className="card_content"
                         py={1}
                         sx={{
-                          borderBottom: "1px solid #FCCE1E",
+                          borderBottom: "1px solid #BA8B22",
                           marginBottom: "14px",
                         }}
                       >
@@ -663,7 +790,7 @@ export default function BakeCard() {
                           className="card_content"
                           sx={{
                             display: "grid",
-                            gridTemplateColumns: "65% 35%",
+                            gridTemplateColumns: "50% 50%",
                             columnGap: "8px",
                             alignItems: "center",
                             mb: "4px",
@@ -671,15 +798,8 @@ export default function BakeCard() {
                         >
                           <Typography variant="body2">
                             <b>{t('description.tvl')}</b>
-                            {/* <Tooltip title="Total Value Locked" arrow>
-                              <IconButton sx={{ padding: "7px" }}>
-                                <InfoIcon
-                                  sx={{ color: "#fff", fontSize: "20px" }}
-                                />
-                              </IconButton>
-                            </Tooltip> */}
                           </Typography>
-                          <Typography variant="body1" textAlign="end"><b>{numberWithCommas(contractBNB)} BNB</b></Typography>
+                          <Typography variant="body1" textAlign="end"><b>{numberWithCommas(contractBNB)} BUSD</b></Typography>
                         </Box>
                         <Box
                           className="card_content"
@@ -693,15 +813,8 @@ export default function BakeCard() {
                         >
                           <Typography variant="body2">
                             <b>{t('description.esRate')}</b>
-                            {/* <Tooltip title="Estimated Rate" arrow>
-                              <IconButton sx={{ padding: "7px" }}>
-                                <InfoIcon
-                                  sx={{ color: "#fff", fontSize: "20px" }}
-                                />
-                              </IconButton>
-                            </Tooltip> */}
                           </Typography>
-                          <Typography variant="body1" textAlign="end"><b>{numberWithCommas(estimatedRate)} {t('description.lands')}/BNB</b></Typography>
+                          <Typography variant="body1" textAlign="end"><b>{ landPrice > 0 ? numberWithCommas(1 / landPrice) : '0' } {t('description.lands')}/BUSD</b></Typography>
                         </Box>
                       </Box>
 
@@ -718,19 +831,9 @@ export default function BakeCard() {
                         >
                           <Typography variant="body2">
                             {t('description.dAPR')}
-                            <PrimaryTooltip
-                              title={t('description.dAPR_b')}
-                              arrow
-                            >
-                              <IconButton sx={{ padding: "7px" }}>
-                                <InfoIcon
-                                  sx={{ color: "#fff", fontSize: "20px" }}
-                                />
-                              </IconButton>
-                            </PrimaryTooltip>
                           </Typography>
                           <Typography variant="body1" textAlign="end">
-                            10%
+                            3%
                           </Typography>
                         </Box>
                         <Box
@@ -741,17 +844,21 @@ export default function BakeCard() {
                             columnGap: "8px",
                             alignItems: "center",
                             mb: "4px",
+                            marginTop:"-5px !important"
                           }}
                         >
                           <Typography variant="body2">
                             {t('description.yAPR')}
-                            {/* <Tooltip title="Yearly APR" arrow>
+                            <PrimaryTooltip
+                              title={t('description.yAPR_b')}
+                              arrow
+                            >
                               <IconButton sx={{ padding: "7px" }}>
                                 <InfoIcon
                                   sx={{ color: "#fff", fontSize: "20px" }}
                                 />
                               </IconButton>
-                            </Tooltip> */}
+                            </PrimaryTooltip>
                           </Typography>
                           <Typography variant="body1" textAlign="end">
                             3,650%
@@ -765,6 +872,7 @@ export default function BakeCard() {
                             columnGap: "8px",
                             alignItems: "center",
                             mb: "4px",
+                            marginTop:"-10px !important"
                           }}
                         >
                           <Typography variant="body2">
@@ -805,58 +913,7 @@ export default function BakeCard() {
                             </Tooltip> */}
                           </Typography>
                           <Typography variant="body1" textAlign="end">
-                            24 {t('description.hours')}
-                          </Typography>
-                        </Box>
-                        <Box
-                          className="card_content"
-                          sx={{
-                            display: "grid",
-                            gridTemplateColumns: "70% 30%",
-                            columnGap: "8px",
-                            alignItems: "center",
-                            mb: "4px",
-                          }}
-                        >
-                          <Typography variant="body2" style={{lineHeight:"1"}}>
-                            {t('description.mndCpd')}
-                            <PrimaryTooltip title={t('description.mndCpd_b')} arrow>
-                              <IconButton sx={{ padding: "7px" }}>
-                                <InfoIcon
-                                  sx={{ color: "#fff", fontSize: "20px" }}
-                                />
-                              </IconButton>
-                            </PrimaryTooltip>
-                          </Typography>
-                          <Typography variant="body1" textAlign="end">
-                            6 {t('description.times')}
-                          </Typography>
-                        </Box>
-                        <Box
-                          className="card_content"
-                          sx={{
-                            display: "grid",
-                            gridTemplateColumns: "65% 35%",
-                            columnGap: "8px",
-                            alignItems: "center",
-                            mb: "4px",
-                          }}
-                        >
-                          <Typography variant="body2">
-                            {t('description.ewTax')}
-                            {/* <PrimaryTooltip
-                              title="Minimum number of times you have to compound in order to avoid the early withdraw tax."
-                              arrow
-                            >
-                              <IconButton sx={{ padding: "7px" }}>
-                                <InfoIcon
-                                  sx={{ color: "#fff", fontSize: "20px" }}
-                                />
-                              </IconButton>
-                            </PrimaryTooltip> */}
-                          </Typography>
-                          <Typography variant="body1" textAlign="end">
-                            50%{" "}
+                            7 {t('description.days')}
                           </Typography>
                         </Box>
                         <Box
@@ -867,6 +924,34 @@ export default function BakeCard() {
                             columnGap: "8px",
                             alignItems: "center",
                             mb: "4px",
+                          }}
+                        >
+                          <Typography variant="body2">
+                            {t('description.ewTax')}
+                            <PrimaryTooltip
+                              title={t('description.ewTax_b')}
+                              arrow
+                            >
+                              <IconButton sx={{ padding: "7px" }}>
+                                <InfoIcon
+                                  sx={{ color: "#fff", fontSize: "20px" }}
+                                />
+                              </IconButton>
+                            </PrimaryTooltip>
+                          </Typography>
+                          <Typography variant="body1" textAlign="end">
+                            {/* 50%{" "} */}
+                          </Typography>
+                        </Box>
+                        <Box
+                          className="card_content"
+                          sx={{
+                            display: "grid",
+                            gridTemplateColumns: "100% 0%",
+                            columnGap: "8px",
+                            alignItems: "center",
+                            mb: "4px",
+                            marginTop: "-5px !important"
                           }}
                         >
                           <Typography variant="body2">
@@ -887,6 +972,48 @@ export default function BakeCard() {
                     </Box>
                   </Box>
                 </CardWrapper>
+
+                <CardWrapper sx={{height: "49%", marginTop: "15px"}}>
+                  <Box>
+                    <Box className="cardWrap">
+                      <Box className="blurbg"></Box>
+                      <Box
+                        className="card_content"
+                        py={1}
+                        sx={{
+                          borderBottom: "1px solid #BA8B22",
+                          marginBottom: "14px",
+                        }}
+                      >
+                        <Typography variant="h5" sx={{ mb: "4px" }}>
+                          {t('description.subTitle12')}
+                        </Typography>
+                        <Typography variant="body2">
+                          {t('description.des12')}
+                          <PrimaryTooltip
+                              title={t('description.des12_b')}
+                              arrow
+                            >
+                              <IconButton sx={{ padding: "7px" }}>
+                                <InfoIcon
+                                  sx={{ color: "#fff", fontSize: "20px" }}
+                                />
+                              </IconButton>
+                            </PrimaryTooltip>
+                        </Typography>
+                      </Box>
+
+                      <Box sx={{ pt: 2 }}>
+                        {
+                          tierList.map((item, index) => {
+                            return <TIERItem item={item} index={index}/>
+                          })
+                        }
+                      </Box>
+
+                    </Box>
+                  </Box>
+                </CardWrapper>
               </Grid>
 
               <Grid item xs={12} sm={6} md={6} my={3} mx={0}>
@@ -897,7 +1024,7 @@ export default function BakeCard() {
                         className="card_content"
                         py={1}
                         sx={{
-                          borderBottom: "1px solid #FCCE1E",
+                          borderBottom: "1px solid #BA8B22",
                           marginBottom: "14px",
                         }}
                       >
@@ -912,48 +1039,28 @@ export default function BakeCard() {
                       <Box py={2}>
                         <Box className="card_content" sx={{ mb: 1 }}>
                           <Typography variant="body2">
-                          {t('description.ii')} (BNB)
-                            {/* <PrimaryTooltip
-                              title="Initial Investment (BNB)"
-                              arrow
-                            >
-                              <IconButton sx={{ padding: "7px" }}>
-                                <InfoIcon
-                                  sx={{ color: "#fff", fontSize: "20px" }}
-                                />
-                              </IconButton>
-                            </PrimaryTooltip> */}
+                          {t('description.ii')} (BUSD)
                           </Typography>
 
                           <FormControl variant="standard" fullWidth>
                             <BootstrapInput
                               autoComplete="off"
                               id="bootstrap-input"
-                              value={initialBNB}
-                              onChange = {(e) => onUpdateInitialBNB(e.target.value)}
+                              value={initialBNBCalc}
+                              onChange = {(e) => { setInitialBNBCalc(e.target.value) }}
                             />
                           </FormControl>
                         </Box>
                         <Box className="card_content">
                           <Typography variant="body2">
                             {t('description.cd')}
-                            {/* <PrimaryTooltip
-                              title="compounding Duration (Days)"
-                              arrow
-                            >
-                              <IconButton sx={{ padding: "7px" }}>
-                                <InfoIcon
-                                  sx={{ color: "#fff", fontSize: "20px" }}
-                                />
-                              </IconButton>
-                            </PrimaryTooltip> */}
                           </Typography>
 
                           <FormControl variant="standard" fullWidth>
                             <BootstrapInput
                               autoComplete="off"
                               id="bootstrap-input"
-                              value={compoundDay}
+                              value={compoundDayCalc}
                               onChange = {(e) => onUpdateCompoundDay(e.target.value)}
                             />
                           </FormControl>
@@ -978,16 +1085,9 @@ export default function BakeCard() {
                         >
                           <Typography variant="body2">
                             {t('description.nTotal')}
-                            {/* <PrimaryTooltip title="New Total" arrow>
-                              <IconButton sx={{ padding: "7px" }}>
-                                <InfoIcon
-                                  sx={{ color: "#fff", fontSize: "20px" }}
-                                />
-                              </IconButton>
-                            </PrimaryTooltip> */}
                           </Typography>
                           <Typography variant="body1" textAlign="end">
-                            {numberWithCommas(newTotal)} {t('description.lands')}
+                            {numberWithCommas(newTotalCalc)} {t('description.lands')}
                           </Typography>
                         </Box>
                         <Box
@@ -1003,16 +1103,9 @@ export default function BakeCard() {
                         >
                           <Typography variant="body2">
                             {t('description.pAmt')}
-                            {/* <PrimaryTooltip title="Profit Amount" arrow>
-                              <IconButton sx={{ padding: "7px" }}>
-                                <InfoIcon
-                                  sx={{ color: "#fff", fontSize: "20px" }}
-                                />
-                              </IconButton>
-                            </PrimaryTooltip> */}
                           </Typography>
                           <Typography variant="body1" textAlign="end">
-                            {numberWithCommas(profitAmount)} {t('description.lands')}
+                            {numberWithCommas(compoundAmountCalc)} {t('description.lands')}
                           </Typography>
                         </Box>
                         <Box
@@ -1030,7 +1123,7 @@ export default function BakeCard() {
                             {t('description.pVal')}
                           </Typography>
                           <Typography variant="body1" textAlign="end">
-                            {numberWithCommas(profitValue)} BNB
+                            {numberWithCommas(compoundValueCalc)} BUSD
                           </Typography>
                         </Box>
                         <Box
@@ -1046,9 +1139,19 @@ export default function BakeCard() {
                         >
                           <Typography variant="body2">
                             {t('description.daEsRwd')}
+                            <PrimaryTooltip
+                              title={t('description.daEsRwd_b')}
+                              arrow
+                            >
+                              <IconButton sx={{ padding: "7px" }}>
+                                <InfoIcon
+                                  sx={{ color: "#fff", fontSize: "20px" }}
+                                />
+                              </IconButton>
+                            </PrimaryTooltip>
                           </Typography>
                           <Typography variant="body1" textAlign="end">
-                            {numberWithCommas(dailyESRewards)} BNB
+                            {numberWithCommas(dailyRewardsCalc)} BUSD
                           </Typography>
                         </Box>
                       </Box>
@@ -1072,7 +1175,7 @@ export default function BakeCard() {
           <Box sx={CardDivider}></Box>
         </Grid>
 
-        <Grid item xs={12} md={6} my={3} mx="0" sx={{zIndex:"1"}}>
+        <Grid item xs={12} md={6} my={3} mx="0" sx={{zIndex:"0"}}>
           <Box sx={{ height: "100%", }}>
             <Box style={{ textAlign: "center" }}>
               <SubTitle
@@ -1102,7 +1205,7 @@ export default function BakeCard() {
                         className="card_content"
                         py={1}
                         sx={{
-                          borderBottom: "1px solid #FCCE1E",
+                          borderBottom: "1px solid #BA8B22",
                           marginBottom: "14px",
                         }}
                       >
@@ -1119,7 +1222,7 @@ export default function BakeCard() {
                           className="card_content"
                           sx={{
                             display: "grid",
-                            gridTemplateColumns: "65% 35%",
+                            gridTemplateColumns: "50% 50%",
                             columnGap: "8px",
                             alignItems: "center",
                             mb: "4px",
@@ -1141,7 +1244,7 @@ export default function BakeCard() {
                           className="card_content"
                           sx={{
                             display: "grid",
-                            gridTemplateColumns: "65% 35%",
+                            gridTemplateColumns: "50% 50%",
                             columnGap: "8px",
                             alignItems: "center",
                             mb: "4px",
@@ -1159,14 +1262,14 @@ export default function BakeCard() {
                             </PrimaryTooltip>
                           </Typography>
                           <Typography variant="body1" textAlign="end">
-                            {`${numberWithCommas(walletBalance.value)} BNB`}
+                            {`${numberWithCommas(walletBalance.value)} BUSD`}
                           </Typography>
                         </Box>
                         <Box
                           className="card_content"
                           sx={{
                             display: "grid",
-                            gridTemplateColumns: "65% 35%",
+                            gridTemplateColumns: "50% 50%",
                             columnGap: "8px",
                             alignItems: "center",
                             mb: "4px",
@@ -1174,16 +1277,9 @@ export default function BakeCard() {
                         >
                           <Typography variant="body2">
                             {t('description.daEsRwd')}
-                            {/* <PrimaryTooltip title="Daily Rewards" arrow>
-                              <IconButton sx={{ padding: "7px" }}>
-                                <InfoIcon
-                                  sx={{ color: "#fff", fontSize: "20px" }}
-                                />
-                              </IconButton>
-                            </PrimaryTooltip> */}
                           </Typography>
                           <Typography variant="body1" textAlign="end">
-                            {`${numberWithCommas(walletBalance.value * 10 / 100)} BNB`}
+                            {`${numberWithCommas(walletBalance.value * (compoundTimes == 0 ? 3 : tierList[compoundTimes-1].value) / 100)} BUSD`}
                           </Typography>
                         </Box>
                       </Box>
@@ -1206,8 +1302,7 @@ export default function BakeCard() {
                             variant="body1"
                             textAlign="center"
                             sx={{
-                              // backgroundColor: "#FF9D00",
-                              backgroundColor: compoundTimes < 6 ? "#FF9D00" : "Green",
+                              backgroundColor: compoundTimes < 8 ? "#FF9D00" : "Green",
                               textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
                               color: "#fff",
                               padding: "3px 6px",
@@ -1215,7 +1310,7 @@ export default function BakeCard() {
                               fontSize: "12px",
                             }}
                           >
-                            {walletBalance.rewards ? numberWithCommas(walletBalance.rewards) + " BNB": t('description.noRwdDct')}
+                            {walletBalance.rewards ? numberWithCommas(walletBalance.rewards) + " BUSD": t('description.noRwdDct')}
                           </Typography>
                         </Box>
                         <Box
@@ -1236,7 +1331,7 @@ export default function BakeCard() {
                             variant="body1"
                             textAlign="center"
                             sx={{
-                              backgroundColor: compoundTimes < 6 ? "primary.main" : "Green",
+                              backgroundColor: compoundTimes < 1 ? "primary.main" : "Green",
                               textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
                               color: "#fff",
                               padding: "3px 6px",
@@ -1244,7 +1339,7 @@ export default function BakeCard() {
                               fontSize: "12px",
                             }}
                           >
-                            {walletBalance.rewards ? numberWithCommas(compoundTimes) + " Times" : t('description.noCpdDct')}
+                            {walletBalance.rewards ? "Tier " + numberWithCommas(compoundTimes): t('description.noCpdDct')}
                           </Typography>
                         </Box>
                         <Box
@@ -1252,7 +1347,24 @@ export default function BakeCard() {
                           p={0}
                           sx={{
                             display: "grid",
-                            gridTemplateColumns: "65% 35%",
+                            gridTemplateColumns: "55% 45%",
+                            columnGap: "8px",
+                            alignItems: "center",
+                            mb: "4px",
+                            marginTop:"10px"
+                          }}
+                        >
+                          <Typography variant="body2">
+                            {t('description.ttInvestment')}
+                          </Typography>
+                          <Typography variant="body1" textAlign="end">{numberWithCommas(totalStaked)} BUSD</Typography>
+                        </Box>
+                        <Box
+                          className="card_content"
+                          p={0}
+                          sx={{
+                            display: "grid",
+                            gridTemplateColumns: "50% 50%",
                             columnGap: "8px",
                             alignItems: "center",
                             mb: "4px",
@@ -1261,20 +1373,12 @@ export default function BakeCard() {
                         >
                           <Typography variant="body2">
                             {t('description.wBal')}
-                            {/* <PrimaryTooltip title="Wallet Balance" arrow>
-                              <IconButton sx={{ padding: "7px" }}>
-                                <InfoIcon
-                                  sx={{ color: "#fff", fontSize: "20px" }}
-                                />
-                              </IconButton>
-                            </PrimaryTooltip> */}
                           </Typography>
-                          <Typography variant="body1" textAlign="end">{numberWithCommas(walletBalance.bnb)} BNB</Typography>
+                          <Typography variant="body1" textAlign="end">{numberWithCommas(walletBalance.bnb)} BUSD</Typography>
                         </Box>
                       </Box>
-
                       <Box py={2}>
-                        <Box className="card_content">
+                        <Box className="card_content" style={{marginBottom:"10px"}}>
                           <FormControl variant="standard" fullWidth>
                             <BootstrapInput
                               // defaultValue="1"
@@ -1289,7 +1393,7 @@ export default function BakeCard() {
                           className="card_content"
                           sx={{
                             display: "grid",
-                            gridTemplateColumns: "65% 35%",
+                            gridTemplateColumns: "35% 65%",
                             columnGap: "8px",
                             alignItems: "center",
                             mb: "4px",
@@ -1305,18 +1409,21 @@ export default function BakeCard() {
 
                       <Box>
                         <Box>
-                          <CustomButton3 label={t('description.buyLands')}
+                          <CustomButton3 label={walletBalance.approved > 0 ? t('description.buyLands') : t('description.approve')}
                             _color = "green"
-                            onClick={bake}/>
+                            onClick={ walletBalance.approved > 0 ? bake : approve}/>
                         </Box>
                         <Box>
                           <CustomButton2 label={t('description.cpdRwds')}
                             countdown = {address? countdown: ""}
+                            disabled = { wrongNetwork || !address ||  totalStaked == 0 || countdown.alive }
                             onClick={reBake}/>
                         </Box>
                         <Box>
                           <CustomButton label={t('description.clmRwd')}
-                            onClick={eatBeans}/>
+                            onClick={eatBeans}
+                            disabled = { wrongNetwork || !address ||  totalStaked == 0 }
+                            />
                         </Box>
                       </Box>
                     </Box>
@@ -1325,60 +1432,36 @@ export default function BakeCard() {
               </Grid>
 
               <Grid item xs={12} sm={6} md={6} my={3} mx={0}>
-                <CardWrapper sx={{height: "43%"}}>
+                <CardWrapper sx={{height: "49%"}}>
                   <Box>
                     <Box className="cardWrap">
-                      <Box
-                        className="card_content"
-                        py={1}
-                        sx={{
-                          borderBottom: "1px solid #FCCE1E",
-                          marginBottom: "14px",
-                        }}
-                      >
-                        <Typography variant="h5" sx={{ mb: "4px" }}>
-                          {t('description.subTitle5')}
-                        </Typography>
-                        <Typography variant="body2">
-                          {t('description.des5')}
-                        </Typography>
-                      </Box>
-
-                      <Box py={2}>
                         <Box
                           className="card_content"
+                          py={1}
                           sx={{
-                            display: "grid",
-                            gridTemplateColumns: "60% 40%",
-                            columnGap: "8px",
-                            alignItems: "center",
-                            mb: "4px",
+                            borderBottom: "1px solid #BA8B22",
+                            marginBottom: "14px",
                           }}
                         >
-                          <Typography variant="body2">
-                            {(roundStarted ? "" : t('description.last')) + t('description.jpSize')}
+                          <Typography variant="h5" sx={{ mb: "4px" }}>
+                            {t('description.subTitle5')}
                           </Typography>
-                          <Typography
-                            variant="body1"
-                            textAlign="center"
-                            sx={{
-                              backgroundColor: "#2BA3FC",
-                              textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
-                              color: "#fff",
-                              padding: "3px 6px",
-                              borderRadius: "10px",
-                              fontSize: "12px",
-                              marginTop: "5px"
-                            }}
-                          >
-                            {jackpotSize ? numberWithCommas(jackpotSize) : 0} BNB
+                          <Typography variant="body2">
+                            {t('description.des5')}
                           </Typography>
                         </Box>
+
+                        <Box py={2}>
+                        {
+                          addressList.map((item, index) => {
+                            return <WINNERItem item={item} index={index}/>
+                          })
+                        }
                         <Box
                           className="card_content"
                           sx={{
                             display: "grid",
-                            gridTemplateColumns: "60% 40%",
+                            gridTemplateColumns: "60% 42%",
                             columnGap: "8px",
                             alignItems: "center",
                             mb: "4px",
@@ -1386,65 +1469,7 @@ export default function BakeCard() {
                         >
                           <Typography variant="body2">
                             {t('description.cntdownTimer')}
-                          </Typography>
-                          <Typography
-                            variant="body1"
-                            textAlign="center"
-                            sx={{
-                              backgroundColor: "#2BA3FC",
-                              textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
-                              color: "#fff",
-                              padding: "3px 6px",
-                              borderRadius: "10px",
-                              fontSize: "12px",
-                              marginTop: "5px"
-                            }}
-                          >
-                            { (roundStarted && countdownLottery.alive) ? countdownLottery.days + "D " + countdownLottery.hours + "H " + countdownLottery.minutes + "M " + countdownLottery.seconds + "S" : "0D 0H 0M 0S" }
-                          </Typography>
-                        </Box>
-                        <Box
-                          className="card_content"
-                          sx={{
-                            display: "grid",
-                            gridTemplateColumns: "60% 40%",
-                            columnGap: "8px",
-                            alignItems: "center",
-                            mb: "4px",
-                          }}
-                        >
-                          <Typography variant="body2">
-                            {t('description.winner')}
-                          </Typography>
-                          <Typography
-                            variant="body1"
-                            textAlign="center"
-                            sx={{
-                              backgroundColor: "#2BA3FC",
-                              textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
-                              color: "#fff",
-                              padding: "3px 6px",
-                              borderRadius: "10px",
-                              fontSize: "12px",
-                              marginTop: "5px"
-                            }}
-                          >
-                            {lotteryWinner == zeroAddrss ? t('description.noWinnerDetect') : shorten(lotteryWinner)}
-                          </Typography>
-                        </Box>
-                        <Box
-                          className="card_content"
-                          sx={{
-                            display: "grid",
-                            gridTemplateColumns: "60% 40%",
-                            columnGap: "8px",
-                            alignItems: "center",
-                            mb: "4px",
-                          }}
-                        >
-                          <Typography variant="body2">
-                            { t('description.yourTicket') }
-                            <PrimaryTooltip title={t('description.yourTicket_b')} arrow>
+                            <PrimaryTooltip title={<div dangerouslySetInnerHTML={{__html: t('description.cntdownTimer_b')}}></div>} arrow>
                               <IconButton sx={{ padding: "7px" }}>
                                 <InfoIcon
                                   sx={{ color: "#fff", fontSize: "20px" }}
@@ -1459,63 +1484,28 @@ export default function BakeCard() {
                               backgroundColor: "#2BA3FC",
                               textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
                               color: "#fff",
-                              padding: "3px 6px",
+                              padding: "3px 1px",
                               borderRadius: "10px",
                               fontSize: "12px",
-                              marginTop: "5px"
+                              marginTop: "5px",
+                              marginLeft: "-10px"
                             }}
                           >
-                            {roundStarted ? numberWithCommas(ticketCount) : numberWithCommas(lastTicketCount)}
-                          </Typography>
-                        </Box>
-                        <Box
-                          className="card_content"
-                          sx={{
-                            display: "grid",
-                            gridTemplateColumns: "60% 40%",
-                            columnGap: "8px",
-                            alignItems: "center",
-                            mb: "4px",
-                          }}
-                        >
-                          <Typography variant="body2">
-                            { t('description.totalTickets') }
-                            <PrimaryTooltip title={t('description.totalTickets_b')} arrow>
-                              <IconButton sx={{ padding: "7px" }}>
-                                <InfoIcon
-                                  sx={{ color: "#fff", fontSize: "20px" }}
-                                />
-                              </IconButton>
-                            </PrimaryTooltip>
-                          </Typography>
-                          <Typography
-                            variant="body1"
-                            textAlign="center"
-                            sx={{
-                              backgroundColor: "#2BA3FC",
-                              textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
-                              color: "#fff",
-                              padding: "3px 6px",
-                              borderRadius: "10px",
-                              fontSize: "12px",
-                              marginTop: "5px"
-                            }}
-                          >
-                            {numberWithCommas(totalTicketCount)}
+                            { (lotteryStarted && countdownLottery.alive) ? countdownLottery.days + "D " + countdownLottery.hours + "H " + countdownLottery.minutes + "M " + countdownLottery.seconds + "S" : "0D 0H 0M 0S" }
                           </Typography>
                         </Box>
                       </Box>
                     </Box>
                   </Box>
                 </CardWrapper>
-                <CardWrapper sx={{height: "55%", marginTop:"15px"}}>
+                <CardWrapper sx={{height: "49%", marginTop:"15px"}}>
                   <Box>
                     <Box className="cardWrap">
                       <Box
                         className="card_content"
                         py={1}
                         sx={{
-                          borderBottom: "1px solid #FCCE1E",
+                          borderBottom: "1px solid #BA8B22",
                           marginBottom: "14px",
                         }}
                       >
@@ -1526,26 +1516,6 @@ export default function BakeCard() {
                           {t('description.des4')}
                         </Typography>
                       </Box>
-
-                      {/* <Box py={2}>
-                        <Box className="card_content">
-                          <Typography variant="body2" sx={{ mb: "4px" }}>
-                            Your Referrer Wallet Address
-                          </Typography>
-
-                          <FormControl variant="standard" fullWidth>
-                            <BootstrapInput
-                              autoComplete="off"
-                              id="bootstrap-input"
-                              value={referralWallet}
-                              onChange={e => onUpdateReferralWallet(e.target.value)}
-                            />
-                          </FormControl>
-                        </Box>
-                        <Box>
-                          <CustomButton label="Set Referrer's Address" />
-                        </Box>
-                      </Box> */}
 
                       <Box py={2}>
                         <Box className="card_content">
@@ -1605,7 +1575,7 @@ export default function BakeCard() {
                               marginTop: "5px"
                             }}
                           >
-                            {refBonus > 0 ? numberWithCommas(refBonus) + " BNB" : t('description.noBonusDct')}
+                            {refBonus > 0 ? numberWithCommas(refBonus) + " BUSD" : t('description.noBonusDct')}
                           </Typography>
                         </Box>
                         <Box

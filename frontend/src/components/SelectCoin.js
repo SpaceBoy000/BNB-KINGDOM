@@ -18,14 +18,14 @@ const StyledButton = styled('button')(
   font-family: 'Roboto',sans-serif;
   font-weight: 400;
   font-size: 1rem;
-  color: #f3c115;
+  color: #BA8B22;
   line-height: 1;
   background-color: transparent;
   // background-image: linear-gradient(90deg, hsla(37, 100%, 50%, 0.75) 0%, hsla(48, 97%, 55%, 0.75) 100%);
   color: theme.palette.text.primary;
-  @media only screen and (max-width: 767px) {
-   display: none;
-  }
+  // @media only screen and (max-width: 767px) {
+  //  display: none;
+  // }
 
   &.${selectUnstyledClasses.expanded} {
     &::after {

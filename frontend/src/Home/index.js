@@ -1,14 +1,14 @@
+import { useEffect, useState } from "react";
 import { Box, Button } from "@mui/material";
 import backgroundImage from "../assets/bg-img.png";
 import BakeCard from "./components/BakeCard";
-import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Connect from "./components/Connect";
 import { styled } from "@mui/system";
-import LanguageSelect from "./components/LanguageSelect";
-import { useState } from "react";
-import MenuIcon from '@mui/icons-material/Menu';
-import logo from "../assets/bnbking-logo.png";
+// import MenuIcon from '@mui/icons-material/Menu';
+
+
+import logo from "../assets/busdking-logo.png";
 
 const MainBox = styled(Box)(
   ({theme}) => `
@@ -44,8 +44,76 @@ const BKDiv = styled(Box)(
     }
 `);
 
+const LaunchTitle = styled("h2")`
+  // color: ${props => props.theme.textPrimary};
+  position: relative;
+  padding-top: 50px;
+  padding-bottom: 20px;
+  
+  width: 100%;
+  text-align: center;
+  font-weight: bolder;
+  color: #BA8B22;
+`;
+
+const Countdown = styled("h3")(({ theme }) => ({
+  // color: ${props => props.theme.textPrimary};
+  position: "relative",
+  width: "100%",
+  textAlign: "center",
+  fontWeight: "bolder",
+  color: "hsla(48, 97%, 55%, 1)",
+  [theme.breakpoints.down("md")]: {
+    fontSize: 20,
+  },
+}));
+
+
 export default function Home() {
-  const [toggle, setToggle] = useState(false);
+  const [countdown, setCountdown] = useState({
+    alive: true,
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  })
+
+  const getCountdown = (deadline) => {
+    const now = Date.now() / 1000;
+    const total = deadline - now;
+    const seconds = Math.floor((total) % 60);
+    const minutes = Math.floor((total / 60) % 60);
+    const hours = Math.floor((total / (60 * 60)) % 24);
+    const days = Math.floor(total / (60 * 60 * 24));
+
+    return {
+        total,
+        days,
+        hours,
+        minutes,
+        seconds
+    };
+  }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+        try {
+            const data = getCountdown(1658080800)
+            setCountdown({
+                alive: data.total > 0,
+                days: data.days,
+                hours: data.hours,
+                minutes: data.minutes,
+                seconds: data.seconds
+            })
+        } catch (err) {
+            console.log(err);
+        }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [])
+
   return (
     <>
       <MainBox
@@ -71,64 +139,24 @@ export default function Home() {
             // minHeight: "100vh",
           }}
         />
-        <div style={{display:"flex", paddingTop:"50px", alignItems:"center"}}>
-          <Button className="menu-Btn" style={{marginLeft: "6%"}} onClick={()=>{setToggle(!toggle)}}>
-            <MenuIcon/>
-          </Button>
-          {/* <LanguageSelect responsive={true} /> */}
-          <Header />
-          <Connect />
+        <div style={{marginBottom:"-30px"}}>
+          { countdown.alive && 
+            <>
+              <LaunchTitle>WE'RE LAUNCHING SOON</LaunchTitle>
+              <Countdown>
+                {`${countdown.days}D ${countdown.hours}H ${countdown.minutes}M ${countdown.seconds}S`}
+              </Countdown>
+            </>
+          }
         </div>
-        
+        <div style={{display:"flex", alignItems:"center"}}>
+          <Header />
+        </div>
         <Box px={2}>
           <BakeCard />
         </Box>
         {/* <Footer/> */}
-        {
-          toggle? 
-        <div style={{height:"100%", width:"100%", display:"flex", position:"fixed", top:"0px", left:"0px", background:"rgba(0,0,0,0.3)", zIndex:"3"}} >
-          <div className="menu-bar" style={{zIndex:"4", display:"flex", flexDirection:"column"}}>
-            <img src={logo} alt="" width={"200px"} />
-            <div style={{height:"60%", marginBottom: "10px"}}>
-              <div className="menu-item">
-                <a href="https://twitter.com/BNBKingdom" target="_blank">
-                  Link to BNB-Kingdom
-                </a>
-              </div>
-              <div className="menu-item">
-                <a href="https://twitter.com/BNBKingdom" target="_blank">
-                  Link to BUSD-Kingdom
-                </a>
-              </div>
-              <div className="menu-item">
-                <a href="https://twitter.com/BNBKingdom" target="_blank" className="a-disable">
-                  Token
-                </a>
-              </div>
-              <div className="menu-item">
-                <a href="https://twitter.com/BNBKingdom" target="_blank" className="a-disable">
-                  NFT
-                </a>
-              </div>
-              <div className="menu-item">
-                <a href="/" target="_blank" className="a-disable">
-                  P2E
-                </a>
-              </div>
-              <div className="menu-item">
-                <LanguageSelect responsive={true} />
-              </div>
-            </div>
-
-            <div style={{flex: 1}}></div>
-            <div >
-              <Footer />
-            </div>
-          </div>
-          <div style={{flex: 1}} onClick={()=>{setToggle(!toggle)}}>
-          </div>
-        </div> : <></>
-        }
+        
       </MainBox>
     </>
   );

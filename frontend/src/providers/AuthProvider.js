@@ -43,6 +43,7 @@ const web3Modal = new Web3Modal({
 });
 
 export const AuthProvider = ({ children }) => {
+
   const [address, setAddress] = useState();
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState(null);
