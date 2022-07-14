@@ -25,7 +25,7 @@ const SocailIcon = styled(IconButton)(({ theme }) => ({
 
 const FooterBox = styled(Box)(
   ({ theme }) => `
-  padding-left: 0px !importantt;
+  padding-left: 0px !important;
   @media only screen and (max-width: 900px){
     margin-top: 30px;
   }

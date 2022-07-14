@@ -149,6 +149,11 @@ export default function BakeCard() {
 
   let tierList = [
     {
+      id: '0th',
+      plus: '0%',
+      total: '3.0%',
+      value: 3
+    },{
       id: '1st',
       plus: '+0.5%',
       total: '3.5%',
@@ -1286,7 +1291,7 @@ export default function BakeCard() {
                             {t('description.dEsRwd')}
                           </Typography>
                           <Typography variant="body1" textAlign="end">
-                            {`${numberWithCommas(walletBalance.value * (compoundTimes == 0 ? 3 : tierList[compoundTimes-1].value) / 100)} BUSD`}
+                            {`${numberWithCommas(walletBalance.value * tierList[compoundTimes].value / 100)} BUSD`}
                           </Typography>
                         </Box>
                       </Box>
@@ -1346,7 +1351,7 @@ export default function BakeCard() {
                               fontSize: "12px",
                             }}
                           >
-                            {walletBalance.rewards ? t('description.tier') + numberWithCommas(compoundTimes): t('description.noTierDct')}
+                            {walletBalance.rewards ? t('description.tier') + " " +numberWithCommas(compoundTimes): t('description.noTierDct')}
                           </Typography>
                         </Box>
                         <Box

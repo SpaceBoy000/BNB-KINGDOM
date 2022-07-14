@@ -44,7 +44,7 @@ i18n
 
             subTitle12: 'Bonus System',
             des12: 'Get a Greater APR Depending on Your Bonus Tier',
-            des12_b: "Each time that you compound increases your Daily APR for the following week. The Daily APR is maxed out at 10% after 8 compound. Once you claim your rewards, your Compound Tier resets and you’ll get a 3% Daily APR.",
+            des12_b: "Each time that you compound increases your Daily APR for the following week. The Daily APR is maxed out at 10% after 8 compound. Once you claim your rewards, your Bonus Tier resets and you’ll get a 3% Daily APR.",
             tier: 'Tier',
             cpd: 'Compound',
 
@@ -126,7 +126,7 @@ i18n
             
             subTitle12: 'Système de bonus',
             des12: 'Obtenez un plus grand APR en fonction de votre niveau de bonus',
-            des12_b: "Chaque fois que vous composez augmente votre APR quotidien pour la semaine suivante. L'APR quotidien est plafonné à 10 % après 8 composés. Une fois que vous avez réclamé vos récompenses, votre niveau composé se réinitialise et vous obtiendrez un APR quotidien de 3 %.",
+            des12_b: "Chaque fois que vous composez augmente votre APR quotidien pour la semaine suivante. L'APR quotidien est plafonné à 10 % après 8 composés. Une fois que vous avez réclamé vos récompenses, votre niveau de bonus est réinitialisé et vous obtiendrez un APR quotidien de 3 %.",
             tier: 'Étage',
             cpd: 'Composé',
             
@@ -208,7 +208,7 @@ i18n
             
             subTitle12: 'Sistema de bonificación',
             des12: 'Obtenga una APR mayor según su nivel de bonificación',
-            des12_b: "Cada vez que capitaliza, aumenta su APR diario para la semana siguiente. La APR diaria tiene un máximo del 10 % después de 8 compuestos. Una vez que reclama sus recompensas, su nivel compuesto se reinicia y obtendrá un APR diario del 3 %.",
+            des12_b: "Cada vez que capitaliza, aumenta su APR diario para la semana siguiente. La APR diaria tiene un máximo del 10 % después de 8 compuestos. Una vez que reclama sus recompensas, su nivel de bonificación se reinicia y obtendrá un APR diario del 3 %.",
             tier: 'Nivel',
             cpd: 'Compuesto',
 
@@ -290,7 +290,7 @@ i18n
             
             subTitle12: '奖金制度',
             des12: '根据您的奖金等级获得更高的 APR',
-            des12_b: "每次复利都会增加下一周的每日 APR。 8 次复合后，每日 APR 最高为 10%。 领取奖励后，您的复合层级将重置，您将获得 3% 的每日 APR。",
+            des12_b: "每次复合都会增加下一周的每日 APR。 8 次复合后，每日 APR 最高为 10%。 领取奖励后，您的奖励等级将重置，您将获得 3% 的每日 APR。",
             tier: '等级',
             cpd: '化合物',
 
@@ -369,7 +369,7 @@ i18n
 
             subTitle12: 'Бонусная система',
             des12: 'Получите большую годовую процентную ставку в зависимости от вашего бонусного уровня',
-            des12_b: "Каждый раз, когда вы выполняете соединение, ваша ежедневная годовая процентная ставка увеличивается на следующую неделю. Максимальная ежедневная годовая процентная ставка достигает 10% после 8 соединений. После того, как вы получите свои награды, ваш уровень сложного соединения сбрасывается, и вы получите 3% ежедневной годовой процентной ставки.",
+            des12_b: "Каждый раз, когда вы набираете проценты, ваша ежедневная годовая процентная ставка увеличивается на следующую неделю. Дневной годовой доход достигает максимума в 10% после 8 соединений. После того, как вы получите свои награды, ваш бонусный уровень сбрасывается, и вы будете получать 3% дневной годовой процентной ставки.",
             tier: 'Уровень',
             cpd: 'Соединение',
 

@@ -58,11 +58,11 @@ const LaunchTitle = styled("h2")`
 
 const Countdown = styled("h3")(({ theme }) => ({
   // color: ${props => props.theme.textPrimary};
-  position: "relative",
+  position: "absolute",
   width: "100%",
-  textAlign: "center",
-  fontWeight: "bolder",
-  color: "hsla(48, 97%, 55%, 1)",
+  height: "45px",
+  backgroundImage: "linear-gradient(90deg, hsla(37, 100%, 50%, 1) 0%, hsla(48, 97%, 55%, 1) 100%)",
+  opacity:"0.4",
   [theme.breakpoints.down("md")]: {
     fontSize: 20,
   },
@@ -142,10 +142,10 @@ export default function Home() {
         <div style={{marginBottom:"-30px"}}>
           { countdown.alive && 
             <>
-              <LaunchTitle>WE'RE LAUNCHING SOON</LaunchTitle>
-              <Countdown>
-                {`${countdown.days}D ${countdown.hours}H ${countdown.minutes}M ${countdown.seconds}S`}
-              </Countdown>
+              <Countdown/>
+              <div style={{color:"white", fontSize:"20px", textAlign:"center", padding:"10px", fontWeight:"bold", position:"relative"}}>
+              LAUNCH &nbsp; {`${countdown.days}D ${countdown.hours}H ${countdown.minutes}M ${countdown.seconds}S`}
+              </div>
             </>
           }
         </div>

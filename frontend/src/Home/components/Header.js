@@ -6,8 +6,6 @@ import Connect from "./Connect";
 import LanguageSelect from "./LanguageSelect";
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 
-import SportsEsportsOutlinedIcon from '@mui/icons-material/SportsEsportsOutlined';
-import { SiRiotgames, SiEljueves, SiPremierleague } from 'react-icons/si';
 import { GiMiner } from 'react-icons/gi';
 import { FaCoins, FaEthereum } from 'react-icons/fa';
 import { BiJoystick } from 'react-icons/bi'
@@ -76,39 +74,9 @@ const MenuButton = styled(Button)(({ theme }) => ({
 export default function Header() {
   const [toggle, setToggle] = useState(false);
   let isMobile = window.matchMedia("only screen and (max-width: 900px)").matches;
-  // console.log("isMobile: ", isMobile);
 
   const link = window.location.href;
   const isBUSDLink = link.includes("busd");
-  // console.log("Link: ", link, isBUSDLink);
-  // const [countdown, setCountdown] = useState({
-  //   alive: true,
-  //   days: 0,
-  //   hours: 0,
-  //   minutes: 0,
-  //   seconds: 0
-  // })
-
-
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //       try {
-  //           const data = getCountdown(1658080800)
-  //           setCountdown({
-  //               alive: data.total > 0,
-  //               days: data.days,
-  //               hours: data.hours,
-  //               minutes: data.minutes,
-  //               seconds: data.seconds
-  //           })
-  //       } catch (err) {
-  //           console.log(err);
-  //       }
-  //   }, 1000);
-
-  //   return () => clearInterval(interval);
-  // }, [])
 
   return (
     <Box
@@ -126,10 +94,6 @@ export default function Header() {
         <div className="header_logo">
           <img src={logo} alt="" width={"600px"} />
         </div>        
-        {/* 
-        <Box sx={{ display:"flex", }}>
-          { <LanguageSelect responsive = {false}/> }
-        </Box> */}
         <Connect/>
       </Wrapper> 
         :
