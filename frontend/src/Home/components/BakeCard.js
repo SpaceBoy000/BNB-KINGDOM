@@ -16,6 +16,7 @@ import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
 import { useLocation, useResolvedPath } from "react-router-dom";
 import Web3 from "web3";
 
+
 import { useContractContext } from "../../providers/ContractProvider";
 import { useAuthContext } from "../../providers/AuthProvider";
 import { useEffect, useState } from "react";
@@ -393,14 +394,20 @@ export default function BakeCard() {
       ]);
 
       console.log("userInvestInfo: ", userInvestInfo);
-      console.log("landPrice: ", landPrice);
+      const lp = new web3.utils.BN(landPrice);
+      const lm = new web3.utils.BN(userInvestInfo.userLandsAmount);
+      const lr = new web3.utils.BN(userInvestInfo.userLandsRewards);
       setWalletBalance({
         bnb: fromWei(`${bnbAmount}`),
         beans: userInvestInfo.userLandsAmount,
-        rewards: fromWei(`${landPrice * userInvestInfo.userLandsRewards}`),
-        value: fromWei(`${landPrice * userInvestInfo.userLandsAmount}`),
+        rewards: fromWei(lp.mul(lr).toString()),
+        value: fromWei(lp.mul(lm).toString()),
         approved: fromWei(`${approvedAmount}`)
       });
+
+      
+
+      
 
       const userInfo = await contract.methods
                             .users(address)
@@ -723,7 +730,7 @@ export default function BakeCard() {
         }}
       >
         <Typography variant="body2">
-          <b>Tier {index+1} </b> - {item.id} Compound
+          <b>{ t('description.tier') } {index+1} </b> - {item.id} { t('description.cpd') }
         </Typography>
         <Typography variant="body1" textAlign="end">
           <b> {item.plus} ({item.total}) </b>
@@ -812,7 +819,7 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            <b>{t('description.esRate')}</b>
+                            <b>{t('description.fixedRate')}</b>
                           </Typography>
                           <Typography variant="body1" textAlign="end"><b>{ landPrice > 0 ? numberWithCommas(1 / landPrice) : '0' } {t('description.lands')}/BUSD</b></Typography>
                         </Box>
@@ -848,9 +855,9 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            {t('description.yAPR')}
+                            {t('description.maxYAPR')}
                             <PrimaryTooltip
-                              title={t('description.yAPR_b')}
+                              title={t('description.maxYAPR_b')}
                               arrow
                             >
                               <IconButton sx={{ padding: "7px" }}>
@@ -927,9 +934,9 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            {t('description.ewTax')}
+                            {t('description.autoMiner')}
                             <PrimaryTooltip
-                              title={t('description.ewTax_b')}
+                              title={t('description.autoMiner_b')}
                               arrow
                             >
                               <IconButton sx={{ padding: "7px" }}>
@@ -1138,9 +1145,9 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            {t('description.daEsRwd')}
+                            {t('description.dEsRwd')}
                             <PrimaryTooltip
-                              title={t('description.daEsRwd_b')}
+                              title={t('description.dEsRwd_b')}
                               arrow
                             >
                               <IconButton sx={{ padding: "7px" }}>
@@ -1276,7 +1283,7 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            {t('description.daEsRwd')}
+                            {t('description.dEsRwd')}
                           </Typography>
                           <Typography variant="body1" textAlign="end">
                             {`${numberWithCommas(walletBalance.value * (compoundTimes == 0 ? 3 : tierList[compoundTimes-1].value) / 100)} BUSD`}
@@ -1325,7 +1332,7 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            {t('description.cpdCnt')}
+                            {t('description.bonusTier')}
                           </Typography>
                           <Typography
                             variant="body1"
@@ -1339,7 +1346,7 @@ export default function BakeCard() {
                               fontSize: "12px",
                             }}
                           >
-                            {walletBalance.rewards ? "Tier " + numberWithCommas(compoundTimes): t('description.noCpdDct')}
+                            {walletBalance.rewards ? t('description.tier') + numberWithCommas(compoundTimes): t('description.noTierDct')}
                           </Typography>
                         </Box>
                         <Box
@@ -1401,7 +1408,7 @@ export default function BakeCard() {
                           }}
                         >
                           <Typography variant="body2">
-                            {t('description.esY')}
+                            {t('description.yield')}
                           </Typography>
                           <Typography variant="body1" textAlign="end">{numberWithCommas(estimatedLands)} {t('description.lands')}</Typography>
                         </Box>

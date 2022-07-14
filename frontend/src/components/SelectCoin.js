@@ -177,6 +177,7 @@ const coins = [
   { code: 'en', label: 'ENG' },
   { code: 'fr', label: 'FRA' },
   { code: 'sp', label: 'ESP' },
+  { code: 'ru', label: 'PYC' },
   { code: 'ch', label: '中国人' },
 ];
 

@@ -188,7 +188,7 @@ export default function Header() {
                       P2E
                     </a>
                   </div>
-                  <div className="menu-item" style={{/*marginLeft:"10px", */zIndex:"999"}}>
+                  <div className="menu-item" style={{marginLeft:"5px", zIndex:"999"}}>
                     <LanguageSelect responsive={true} />
                   </div>
                 </div>
