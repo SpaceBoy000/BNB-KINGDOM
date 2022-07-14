@@ -7,11 +7,11 @@ import { PopperUnstyled } from '@mui/base';
 
 const StyledButton = styled('button')(
   ({ theme }) => `
-  width: 190px;
+  // width: 190px;
   text-align: center;
   // padding-top: 10px;
-  padding: 17px;
-  margin-left: 6%;
+  // padding: 17px;
+  // margin-left: 6%;
   text-shadow: 3px 2px 3px rgb(0 0 0 / 78%);
   border-radius: 5px;
   border-style:none;
@@ -20,12 +20,12 @@ const StyledButton = styled('button')(
   font-size: 1rem;
   color: white;
   line-height: 1;
-  background-color: #d8a909;
-  background-image: linear-gradient(90deg, hsla(37, 100%, 50%, 0.75) 0%, hsla(48, 97%, 55%, 0.75) 100%);
+  background-color: transparent;
+  // background-image: linear-gradient(90deg, hsla(37, 100%, 50%, 0.75) 0%, hsla(48, 97%, 55%, 0.75) 100%);
   color: theme.palette.text.primary;
-  @media only screen and (max-width: 767px) {
-   display: none; 
-  }
+  //@media only screen and (max-width: 767px) {
+  // display: none; 
+  //}
 
   &.${selectUnstyledClasses.expanded} {
     &::after {
@@ -177,6 +177,7 @@ const coins = [
   { code: 'en', label: 'ENG' },
   { code: 'fr', label: 'FRA' },
   { code: 'sp', label: 'ESP' },
+  { code: 'ru', label: 'PYC' },
   { code: 'ch', label: '中国人' },
 ];
 

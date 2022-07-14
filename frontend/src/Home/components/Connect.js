@@ -5,8 +5,9 @@ import CachedIcon from "@mui/icons-material/Cached";
 import { useAuthContext } from "../../providers/AuthProvider";
 
 const ConnectButton = styled(Button)(({ theme }) => ({
-  width: "190px",
-  marginRight: "6%",
+  width: "200px",
+  height: "55px",
+  marginTop: "52px",
   textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
   borderRadius: "5px",
   // border: "1px solid #ff5141",
@@ -29,8 +30,10 @@ const SmallScreenConnectButton = styled(Button)(({ theme }) => ({
   marginBottom: 0,
   textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
   width: "45%",
-  marginLeft: "auto",
-  marginRight: "auto",
+  height: "40px",
+  fontSize: "14px",
+  // marginLeft: "auto",
+  // marginRight: "auto",
   backgroundImage: "linear-gradient(90deg, hsla(37, 100%, 50%, 0.75) 0%, hsla(48, 97%, 55%, 0.75) 100%)",
   color: theme.palette.text.primary,
   [theme.breakpoints.down("md")]: {

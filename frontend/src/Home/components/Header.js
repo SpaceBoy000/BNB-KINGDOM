@@ -1,14 +1,23 @@
 import { useEffect, useState } from "react";
-import Box from "@mui/material/Box";
+import { Box, Button } from "@mui/material";
 import { styled } from "@mui/system";
 import logo from "../../assets/bnbking-logo.png";
 import Connect from "./Connect";
 import LanguageSelect from "./LanguageSelect";
+import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 
+import { GiMiner } from 'react-icons/gi';
+import { FaCoins, FaEthereum } from 'react-icons/fa';
+import { BiJoystick } from 'react-icons/bi'
+
+import Footer from "./Footer";
 
 const Wrapper = styled("div")(({ theme }) => ({
   textAlign: "center",
+  paddingTop: "50px",
   paddingBottom: 24,
+  display: "flex",
+  justifyContent: "space-between",
   [theme.breakpoints.down("md")]: {
     h5: {
       fontSize: 20,
@@ -17,99 +26,146 @@ const Wrapper = styled("div")(({ theme }) => ({
   },
 }));
 
-const LaunchTitle = styled("h3")(({ theme }) => ({
-  // color: ${props => props.theme.textPrimary};
-  marginTop: "10px",
-  width: "100%",
+const SmallScreenWrapper = styled("div")(({ theme }) => ({
+  display: "none",
   textAlign: "center",
-  fontWeight: "bolder",
-  color: "white",
+  paddingTop: "50px",
+  paddingBottom: 24,
+  display: "flex",
+  justifyContent: "space-between",
+  [theme.breakpoints.down("md")]: {
+    h5: {
+      fontSize: 20,
+      margin: 0,
+    },
+    display: "block",
+  },
 }));
 
-const Countdown = styled("h3")(({ theme }) => ({
-  // color: ${props => props.theme.textPrimary};
-  width: "100%",
-  textAlign: "center",
-  fontWeight: "bolder",
-  color: "white",
+const MenuButton = styled(Button)(({ theme }) => ({
+  display:"flex",
+  width: "190px",
+  height:"55px",
+  marginTop:"52px",
+  justifyContent: "space-around !important",
+  textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
+  borderRadius: "5px",
+  // border: "1px solid #ff5141",
+  fontWeight: "400",
+  fontSize: "15px",
+  padding: "15px 24px",
+  lineHeight: 1,
+  backgroundImage:
+    "linear-gradient(90deg, #f5a002, #f3c518)",
+  color: theme.palette.text.primary,
   [theme.breakpoints.down("md")]: {
-    fontSize: 15,
+    // display: "none",
+    width: "40%",
+    height: "40px",
+    marginTop: "20px",
+    fontSize: "14px",
   },
 }));
 
 export default function Header() {
-
-  const [countdown, setCountdown] = useState({
-    alive: true,
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0
-  })
-
-  const getCountdown = (deadline) => {
-    const now = Date.now() / 1000;
-    const total = deadline - now;
-    const seconds = Math.floor((total) % 60);
-    const minutes = Math.floor((total / 60) % 60);
-    const hours = Math.floor((total / (60 * 60)) % 24);
-    const days = Math.floor(total / (60 * 60 * 24));
-
-    return {
-        total,
-        days,
-        hours,
-        minutes,
-        seconds
-    };
-  }
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-        try {
-            const data = getCountdown(1653746400)
-            setCountdown({
-                alive: data.total > 0,
-                days: data.days,
-                hours: data.hours,
-                minutes: data.minutes,
-                seconds: data.seconds
-            })
-        } catch (err) {
-            console.log(err);
-        }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [])
+  const [toggle, setToggle] = useState(false);
+  let isMobile = window.matchMedia("only screen and (max-width: 900px)").matches;
+  console.log("isMobile: ", isMobile);
+  const link = window.location.href;
+  const isBUSDLink = link.includes("busd");
 
   return (
     <Box
       component="div"
-      sx={{ px: { lg: 0, xs: 2 }, maxWidth: "calc(100% - 10%)", mx: "auto", zIndex:"1" }}
+      sx={{ px: { lg: 0, xs: 2 }, width: "100%", maxWidth: "calc(100% - 11%)", mx: "auto", zIndex:"1" }}
     >
-      <Wrapper>
-        <div className="header_logo">
-          <img src={logo} alt="" width={"600px"} />
-        </div>
+      { !isMobile ?
+        <Wrapper>
+          <MenuButton onClick={()=>{ setToggle(!toggle) }}>
+            <MenuRoundedIcon/> 
+            <div >
+              Menu
+            </div>
+          </MenuButton>
 
-        <Box sx={{ display:"flex", }}>
-          <LanguageSelect responsive = {false}/>
-          <Connect responsive = {false}/>
-        </Box>
+          <div className="header_logo">
+            <img src={logo} alt="" width={"600px"} />
+          </div>
+          <Connect/>
+        </Wrapper>
+        :
+        <SmallScreenWrapper>
+          <div className="header_logo">
+            <img src={logo} alt="" />
+          </div>
+          <div style={{display:"flex", justifyContent:"space-evenly"}}>
+            <MenuButton onClick={()=>{ setToggle(!toggle) }}>
+              <MenuRoundedIcon/> 
+              <div>
+                Menu
+              </div>
+            </MenuButton>
+            <Connect responsive = { false }/>
+          </div>
+        </SmallScreenWrapper>
+      }
+      {
+          toggle ? 
+            <div style={{height:"100%", width:"100%", display:"flex", position:"fixed", top:"0px", left:"0px", background:"rgba(0,0,0,0.3)", zIndex:"3"}} >
+              <div className="menu-bar">
+                <div style={{alignSelf:"center", marginTop:"10px"}}>
+                  <img src="./favicon.png" alt="" width={"30px"} />
+                </div>
+                <div className="menu-list">
+                  <div className="menu-item">
+                    <GiMiner className="a-icon"/>
+                    <a href="https://bnbkingdom.xyz/?ref=0x5251aab2c0Bd1f49571e5E9c688B1EcF29E85E07" className={!isBUSDLink ? "w-disable" : ''} target="_blank" style={{flex: 1}}>
+                      BNB Kingdom
+                    </a>
+                    <div className={!isBUSDLink ? "menu-line" : ''}/>
+                  </div>
+                  <div className="menu-item">
+                    <GiMiner className="a-icon"/>
+                    <a href="https://busdkingdom.xyz/" className={isBUSDLink ? "w-disable" : ''} target="_blank" style={{flex: 1}}>
+                      BUSD Kingdom
+                    </a>
+                    <div className={isBUSDLink ? "menu-line" : ''}/>
+                  </div>
+                  <div className="menu-item">
+                    <FaCoins className="a-icon"/>
+                    <a href="https://twitter.com/BNBKingdom" target="_blank" className="a-disable">
+                      Token
+                    </a>
+                  </div>
+                  <div className="menu-item">
+                    <FaEthereum className="a-icon"/>
+                    <a href="https://twitter.com/BNBKingdom" target="_blank" className="a-disable">
+                      NFT
+                    </a>
+                  </div>
+                  <div className="menu-item">
+                    <BiJoystick className="a-icon"/>
+                    <a href="/" target="_blank" className="a-disable">
+                      P2E
+                    </a>
+                  </div>
+                  <div className="menu-item" style={{marginLeft:"5px", zIndex:"999"}}>
+                    <LanguageSelect responsive={true} />
+                  </div>
+                </div>
 
-        <Box sx={{ textAlign: "right"}}>
-        </Box>
-
-        {/* { countdown.alive && 
-          <>
-            <LaunchTitle>WE'RE LAUNCHING SOON</LaunchTitle>
-            <Countdown>
-              {`${countdown.days} Days, ${countdown.hours} Hours, ${countdown.minutes} Mins & ${countdown.seconds} Secs`}
-            </Countdown>
-          </>
-        } */}
-      </Wrapper>
+                <div style={{flex: 1}}></div>
+                <div >
+                  <Footer />
+                </div>
+              </div>
+              <div style={{height: "100%", width:"3px", backgroundColor:"#FCCE1E"}}></div>
+              <div style={{flex: 1, zIndex:"9999"}} onClick={()=>{setToggle(!toggle)}}>
+              </div>
+            </div> 
+            : 
+            <></>
+      }
     </Box>
   );
 }

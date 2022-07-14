@@ -455,7 +455,7 @@ export default function BakeCard() {
   useEffect(() => {
     const intervalID = setInterval(() => {
       try {
-        console.log("LotteryRoundInfo: ", roundStartLottery, " : ", roundIntervalLottery, " : ", Number(roundStartLottery) + Number(roundIntervalLottery));
+        // console.log("LotteryRoundInfo: ", roundStartLottery, " : ", roundIntervalLottery, " : ", Number(roundStartLottery) + Number(roundIntervalLottery));
         const data = getCountdown(Number(roundStartLottery) + Number(roundIntervalLottery));
         setCountdownLottery({
           alive: data.total > 0,
@@ -1072,7 +1072,7 @@ export default function BakeCard() {
           <Box sx={CardDivider}></Box>
         </Grid>
 
-        <Grid item xs={12} md={6} my={3} mx="0" sx={{zIndex:"1"}}>
+        <Grid item xs={12} md={6} my={3} mx="0" sx={{zIndex:"0"}}>
           <Box sx={{ height: "100%", }}>
             <Box style={{ textAlign: "center" }}>
               <SubTitle
@@ -1349,7 +1349,7 @@ export default function BakeCard() {
                           className="card_content"
                           sx={{
                             display: "grid",
-                            gridTemplateColumns: "60% 40%",
+                            gridTemplateColumns: "55% 45%",
                             columnGap: "8px",
                             alignItems: "center",
                             mb: "4px",
@@ -1378,7 +1378,7 @@ export default function BakeCard() {
                           className="card_content"
                           sx={{
                             display: "grid",
-                            gridTemplateColumns: "60% 40%",
+                            gridTemplateColumns: "55% 45%",
                             columnGap: "8px",
                             alignItems: "center",
                             mb: "4px",
@@ -1394,7 +1394,7 @@ export default function BakeCard() {
                               backgroundColor: "#2BA3FC",
                               textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
                               color: "#fff",
-                              padding: "3px 6px",
+                              padding: "3px 1px",
                               borderRadius: "10px",
                               fontSize: "12px",
                               marginTop: "5px"
@@ -1407,7 +1407,7 @@ export default function BakeCard() {
                           className="card_content"
                           sx={{
                             display: "grid",
-                            gridTemplateColumns: "60% 40%",
+                            gridTemplateColumns: "55% 45%",
                             columnGap: "8px",
                             alignItems: "center",
                             mb: "4px",
@@ -1436,7 +1436,7 @@ export default function BakeCard() {
                           className="card_content"
                           sx={{
                             display: "grid",
-                            gridTemplateColumns: "60% 40%",
+                            gridTemplateColumns: "55% 45%",
                             columnGap: "8px",
                             alignItems: "center",
                             mb: "4px",
@@ -1472,7 +1472,7 @@ export default function BakeCard() {
                           className="card_content"
                           sx={{
                             display: "grid",
-                            gridTemplateColumns: "60% 40%",
+                            gridTemplateColumns: "55% 45%",
                             columnGap: "8px",
                             alignItems: "center",
                             mb: "4px",

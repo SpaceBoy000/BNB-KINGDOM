@@ -1,11 +1,9 @@
+import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import backgroundImage from "../assets/bg-img.png";
 import BakeCard from "./components/BakeCard";
-import Footer from "./components/Footer";
 import Header from "./components/Header";
-import Connect from "./components/Connect";
 import { styled } from "@mui/system";
-import LanguageSelect from "./components/LanguageSelect";
 
 const MainBox = styled(Box)(
   ({theme}) => `
@@ -42,6 +40,50 @@ const BKDiv = styled(Box)(
 `);
 
 export default function Home() {
+  const [countdown, setCountdown] = useState({
+    alive: true,
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  })
+
+  const getCountdown = (deadline) => {
+    const now = Date.now() / 1000;
+    const total = deadline - now;
+    const seconds = Math.floor((total) % 60);
+    const minutes = Math.floor((total / 60) % 60);
+    const hours = Math.floor((total / (60 * 60)) % 24);
+    const days = Math.floor(total / (60 * 60 * 24));
+
+    return {
+        total,
+        days,
+        hours,
+        minutes,
+        seconds
+    };
+  }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+        try {
+            const data = getCountdown(1658080800)
+            setCountdown({
+                alive: data.total > 0,
+                days: data.days,
+                hours: data.hours,
+                minutes: data.minutes,
+                seconds: data.seconds
+            })
+        } catch (err) {
+            console.log(err);
+        }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [])
+
   return (
     <>
       <MainBox
@@ -67,16 +109,14 @@ export default function Home() {
             // minHeight: "100vh",
           }}
         />
-        <div style={{display:"flex", paddingTop:"50px", alignItems:"center"}}>
-          <LanguageSelect responsive={true} />
+        <div style={{display:"flex", alignItems:"center"}}>
           <Header />
-          <Connect />
         </div>
         
         <Box px={2}>
           <BakeCard />
         </Box>
-        <Footer />
+        {/* <Footer /> */}
       </MainBox>
     </>
   );
