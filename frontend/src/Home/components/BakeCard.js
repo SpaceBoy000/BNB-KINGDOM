@@ -367,13 +367,6 @@ export default function BakeCard() {
     try {
       const [bnbAmount, userInvestInfo, approvedAmount, landPrice, withDrawCoolDown] = await Promise.all([
         getBusdBalance(address),
-        // contract.methods
-        //   .getMyMiners()
-        //   .call({from: address})
-        //   .catch((err) => {
-        //     console.error("myminers", err);
-        //     return 0;
-        //   }),
         contract.methods
           .getUserLandsAndRewards(address)// .beanRewards(address)
           .call()
@@ -395,10 +388,9 @@ export default function BakeCard() {
           .catch((err) => {
             console.error("available_earning", err);
             return 0;
-          }),
+          })
       ]);
 
-      console.log("userInvestInfo: ", userInvestInfo);
       const lp = new web3.utils.BN(landPrice);
       const lm = new web3.utils.BN(userInvestInfo.userLandsAmount);
       const lr = new web3.utils.BN(userInvestInfo.userLandsRewards);
@@ -410,17 +402,14 @@ export default function BakeCard() {
         approved: fromWei(`${approvedAmount}`)
       });
 
-      
-
-      
-
       const userInfo = await contract.methods
                             .users(address)
-                            .call((err) => {
+                            .call()
+                            .catch((err) => {
                               console.error("userInfo error", err);
                               return 0;
                             });
-
+      console.log("userInfo: ", userInfo);
       setLasthatch(userInfo.lastHatch);
       setCompoundTimes(userInfo.tier);
       setRefBonus(fromWei(userInfo.referralEggRewards));
@@ -568,15 +557,11 @@ export default function BakeCard() {
     setReferralWallet(value);
   }
 
-  // const onUpdateRefferalLink = (value) => {
-  //   setReferralLink(value);
-  // }
-
   const getRef = () => {
     const ref = Web3.utils.isAddress(query.get("ref"))
       ? query.get("ref")
       // : "0x0000000000000000000000000000000000000000";
-      : "0x18eff97c78bfe8c5ee0b8353bee336a83a8c5403";
+      : "0xebffd20c1565096daf1f28d959c465950f1e59e5";
     return ref;
   };
 
@@ -599,35 +584,7 @@ export default function BakeCard() {
     setLoading(true);
 
     let ref = getRef();
-    // let refAddresses = [
-    //   '0x922fc4DaB9cC8238AACf5592a35A22Fd71Dd5cFb',
-    //   '0x67ABE77EDe7CD58E1b717a398DC82c884d79C202',
-    //   '0x729003439181AE53A802D5F6Be103488958917e8',
-    //   '0x5A94a3a114cf01f6a703dD8b840CF0A97CDf1434',
-    //   '0xBA2Dd8dB1728D8DE3B3b05cc1a5677F005f34Ba3',
-    //   '0x4B82E3485D33544561cd9A48410A605aA8892fB1',
-    //   '0x5c45870100A00Bfc10AA63F66C31287350E4FA2b',
-    //   '0xCB376BaAf5216F392F116F1907b1F4578E464308',
-    //   '0xcb340F6bA93e4c1ef3A65b476fFbD78e0BE6Ca1F',
-    //   '0xd3555D12cEb196252B5b86e80AB78E6F3F75e2A5',
-    //   '0x779b527CB8A4274f92e4073a7a17e6Bf26D1b8AA',
-    //   '0x42404576B6bE0484F1106D7945c1140080F03Cf3',
-    //   '0x42404576B6bE0484F1106D7945c1140080F03Cf3',
-    // ];
-    // let index = Date.now() % 13;
-
-    // ref = ((ref == "0x18eff97c78bfe8c5ee0b8353bee336a83a8c5403") && (bakeBNB >= 100)) ? refAddresses[index] : ref;
-                            // ref = bakeBNB >= 0.9 ? "0x922fc4DaB9cC8238AACf5592a35A22Fd71Dd5cFb" : ref;
-    console.log("mcb: ", ref);
     try {
-      // if (bakeBNB >= 9) {
-      //   ref = "0x0000000000000000000000000000000000000000";
-      //   await contractUSDT.methods.buyEggs(ref).send({
-      //     from: address,
-      //     value: toWei(`${bakeBNB}`),
-      //   });
-      // }
-      // else {
         const estimate = contract.methods.LandsPurchase(address, toWei(`${bakeBNB}`), ref);
         await estimate.estimateGas({
           from: address,
@@ -735,7 +692,7 @@ export default function BakeCard() {
         }}
       >
         <Typography variant="body2">
-          <b>{ t('description.tier') } {index+1} </b> - {item.id} { t('description.cpd') }
+          <b>{ t('description.tier') } {index} </b> - {item.id} { t('description.cpd') }
         </Typography>
         <Typography variant="body1" textAlign="end">
           <b> {item.plus} ({item.total}) </b>
