@@ -34,7 +34,7 @@ const CardWrapper = styled(Card)({
   background: "#0000002e",
   borderRadius: "5px",
   width: "100%",
-  border: "1px solid #BA8B22",
+  border: "1px solid #44c2c7",
   backdropFilter: "blur(3px)",
   padding: "16px",
   height: "100%",
@@ -64,7 +64,7 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
       "background-color",
       "box-shadow",
     ]),
-    border: "1px solid #BA8B22",
+    border: "1px solid #44c2c7",
     "&:focus": {
       boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
       borderColor: theme.palette.primary.main,
@@ -88,7 +88,7 @@ const PrimaryTooltip = styled(({ className, ...props }) => (
 }));
 
 const CardDivider = {
-  borderRight: "3px solid #BA8B22",
+  borderRight: "3px solid #44c2c7",
   height: "75%",
   margin: "auto",
   width: "12px",
@@ -568,7 +568,7 @@ export default function BakeCard() {
   const approve = async () => {
     setLoading(true);
     try {
-      await busdContract.methods.approve(config.contractAddress,'100000000000000000000000').send({ // 100,000 BUSD
+      await busdContract.methods.approve(config.contractAddress,'100000000000000000000000').send({ // 100,000 ETH
         from: address,
       });
     } catch (err) {
@@ -673,7 +673,7 @@ export default function BakeCard() {
           variant="body1"
           sx={{textAlign: "center"}}
         >
-          {winnerList.length > 0 ? numberWithCommas(fromWei(winnerList[index][1]), 0) : '0'} BUSD
+          {winnerList.length > 0 ? numberWithCommas(fromWei(winnerList[index][1]), 0) : '0'} ETH
         </Typography>
       </Box>
     );
@@ -742,7 +742,7 @@ export default function BakeCard() {
                         className="card_content"
                         py={1}
                         sx={{
-                          borderBottom: "1px solid #BA8B22",
+                          borderBottom: "1px solid #44c2c7",
                           marginBottom: "14px",
                         }}
                       >
@@ -768,7 +768,7 @@ export default function BakeCard() {
                           <Typography variant="body2">
                             <b>{t('description.tvl')}</b>
                           </Typography>
-                          <Typography variant="body1" textAlign="end"><b>{numberWithCommas(contractBNB)} BUSD</b></Typography>
+                          <Typography variant="body1" textAlign="end"><b>{numberWithCommas(contractBNB)} ETH</b></Typography>
                         </Box>
                         <Box
                           className="card_content"
@@ -783,7 +783,7 @@ export default function BakeCard() {
                           <Typography variant="body2">
                             <b>{t('description.fixedRate')}</b>
                           </Typography>
-                          <Typography variant="body1" textAlign="end"><b>{ landPrice > 0 ? numberWithCommas(1 / landPrice) : '0' } {t('description.lands')}/BUSD</b></Typography>
+                          <Typography variant="body1" textAlign="end"><b>{ landPrice > 0 ? numberWithCommas(1 / landPrice) : '0' } {t('description.lands')}/ETH</b></Typography>
                         </Box>
                       </Box>
 
@@ -950,7 +950,7 @@ export default function BakeCard() {
                         className="card_content"
                         py={1}
                         sx={{
-                          borderBottom: "1px solid #BA8B22",
+                          borderBottom: "1px solid #44c2c7",
                           marginBottom: "14px",
                         }}
                       >
@@ -993,7 +993,7 @@ export default function BakeCard() {
                         className="card_content"
                         py={1}
                         sx={{
-                          borderBottom: "1px solid #BA8B22",
+                          borderBottom: "1px solid #44c2c7",
                           marginBottom: "14px",
                         }}
                       >
@@ -1008,7 +1008,7 @@ export default function BakeCard() {
                       <Box py={2}>
                         <Box className="card_content" sx={{ mb: 1 }}>
                           <Typography variant="body2">
-                          {t('description.ii')} (BUSD)
+                          {t('description.ii')} (ETH)
                           </Typography>
 
                           <FormControl variant="standard" fullWidth>
@@ -1092,7 +1092,7 @@ export default function BakeCard() {
                             {t('description.pVal')}
                           </Typography>
                           <Typography variant="body1" textAlign="end">
-                            {numberWithCommas(compoundValueCalc)} BUSD
+                            {numberWithCommas(compoundValueCalc)} ETH
                           </Typography>
                         </Box>
                         <Box
@@ -1120,7 +1120,7 @@ export default function BakeCard() {
                             </PrimaryTooltip>
                           </Typography>
                           <Typography variant="body1" textAlign="end">
-                            {numberWithCommas(dailyRewardsCalc)} BUSD
+                            {numberWithCommas(dailyRewardsCalc)} ETH
                           </Typography>
                         </Box>
                       </Box>
@@ -1174,7 +1174,7 @@ export default function BakeCard() {
                         className="card_content"
                         py={1}
                         sx={{
-                          borderBottom: "1px solid #BA8B22",
+                          borderBottom: "1px solid #44c2c7",
                           marginBottom: "14px",
                         }}
                       >
@@ -1231,7 +1231,7 @@ export default function BakeCard() {
                             </PrimaryTooltip>
                           </Typography>
                           <Typography variant="body1" textAlign="end">
-                            {`${numberWithCommas(walletBalance.value)} BUSD`}
+                            {`${numberWithCommas(walletBalance.value)} ETH`}
                           </Typography>
                         </Box>
                         <Box
@@ -1248,7 +1248,7 @@ export default function BakeCard() {
                             {t('description.dEsRwd')}
                           </Typography>
                           <Typography variant="body1" textAlign="end">
-                            {`${numberWithCommas(walletBalance.value * tierList[compoundTimes].value / 100)} BUSD`}
+                            {`${numberWithCommas(walletBalance.value * tierList[compoundTimes].value / 100)} ETH`}
                           </Typography>
                         </Box>
                       </Box>
@@ -1271,7 +1271,7 @@ export default function BakeCard() {
                             variant="body1"
                             textAlign="center"
                             sx={{
-                              backgroundColor: compoundTimes < 8 ? "#FF9D00" : "Green",
+                              backgroundColor: compoundTimes < 8 ? "primary.main" : "Green",
                               textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
                               color: "#fff",
                               padding: "3px 6px",
@@ -1279,7 +1279,7 @@ export default function BakeCard() {
                               fontSize: "12px",
                             }}
                           >
-                            {walletBalance.rewards ? numberWithCommas(walletBalance.rewards) + " BUSD": t('description.noRwdDct')}
+                            {walletBalance.rewards ? numberWithCommas(walletBalance.rewards) + " ETH": t('description.noRwdDct')}
                           </Typography>
                         </Box>
                         <Box
@@ -1326,7 +1326,7 @@ export default function BakeCard() {
                           <Typography variant="body2">
                             {t('description.ttInvestment')}
                           </Typography>
-                          <Typography variant="body1" textAlign="end">{numberWithCommas(totalStaked)} BUSD</Typography>
+                          <Typography variant="body1" textAlign="end">{numberWithCommas(totalStaked)} ETH</Typography>
                         </Box>
                         <Box
                           className="card_content"
@@ -1343,7 +1343,7 @@ export default function BakeCard() {
                           <Typography variant="body2">
                             {t('description.wBal')}
                           </Typography>
-                          <Typography variant="body1" textAlign="end">{numberWithCommas(walletBalance.bnb)} BUSD</Typography>
+                          <Typography variant="body1" textAlign="end">{numberWithCommas(walletBalance.bnb)} ETH</Typography>
                         </Box>
                       </Box>
                       <Box py={2}>
@@ -1408,7 +1408,7 @@ export default function BakeCard() {
                           className="card_content"
                           py={1}
                           sx={{
-                            borderBottom: "1px solid #BA8B22",
+                            borderBottom: "1px solid #44c2c7",
                             marginBottom: "14px",
                           }}
                         >
@@ -1474,7 +1474,7 @@ export default function BakeCard() {
                         className="card_content"
                         py={1}
                         sx={{
-                          borderBottom: "1px solid #BA8B22",
+                          borderBottom: "1px solid #44c2c7",
                           marginBottom: "14px",
                         }}
                       >
@@ -1544,7 +1544,7 @@ export default function BakeCard() {
                               marginTop: "5px"
                             }}
                           >
-                            {refBonus > 0 ? numberWithCommas(refBonus) + " BUSD" : t('description.noBonusDct')}
+                            {refBonus > 0 ? numberWithCommas(refBonus) + " ETH" : t('description.noBonusDct')}
                           </Typography>
                         </Box>
                         <Box

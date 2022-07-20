@@ -8,7 +8,7 @@ import { styled } from "@mui/system";
 // import MenuIcon from '@mui/icons-material/Menu';
 
 
-import logo from "../assets/busdking-logo.png";
+// import logo from "../assets/busdking-logo.png";
 
 const MainBox = styled(Box)(
   ({theme}) => `

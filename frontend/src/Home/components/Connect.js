@@ -9,19 +9,24 @@ const ConnectButton = styled(Button)(({ theme }) => ({
   height: "55px",
   marginTop: "52px",
   textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
+  border: "1px solid #44c2c7",
   borderRadius: "5px",
   fontWeight: "400",
   fontSize: "15px",
   padding: "15px 24px",
   lineHeight: 1,
   // backgroundImage: "linear-gradient(90deg, rgba(255,50,20,0.75), rgba(253, 136, 53, 0.75))",
-  backgroundImage:
-    // "linear-gradient(90deg, hsla(37, 100%, 50%, 0.75) 0%, hsla(48, 97%, 55%, 0.75) 100%)",
-    "linear-gradient(90deg, #b68117 0%, #fffa8e 100%)",
+  // backgroundImage:
+  //   "linear-gradient(90deg, #b68117 0%, #fffa8e 100%)",
+  backgroundColor: "#1db3b8",
   color: theme.palette.text.primary,
   [theme.breakpoints.down("md")]: {
     display: "none",
   },
+  "&:hover" :{
+    background: "rgb(73 207 211)",
+    transition: ".5s all"
+  }
 }));
 
 const SmallScreenConnectButton = styled(Button)(({ theme }) => ({
@@ -34,8 +39,9 @@ const SmallScreenConnectButton = styled(Button)(({ theme }) => ({
   fontSize: "14px",
   // marginLeft: "auto",
   // marginRight: "auto",
-  backgroundImage: // "linear-gradient(90deg, hsla(37, 100%, 50%, 0.75) 0%, hsla(48, 97%, 55%, 0.75) 100%)",
-          "linear-gradient(90deg, #b68117 0%, #fffa8e 100%)",
+  backgroundColor: "#1db3b8",
+  // backgroundImage: // "linear-gradient(90deg, hsla(37, 100%, 50%, 0.75) 0%, hsla(48, 97%, 55%, 0.75) 100%)",
+          // "linear-gradient(90deg, #b68117 0%, #fffa8e 100%)",
   color: theme.palette.text.primary,
   [theme.breakpoints.down("md")]: {
     display: "block",

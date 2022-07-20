@@ -11,12 +11,12 @@ import { IconButton } from "@mui/material";
 import '../index'
 import { config } from "../../config"
 const SocailIcon = styled(IconButton)(({ theme }) => ({
-  background: "#BA8B22",
+  background: "#8feaf2",
   color: "#000",
   margin: "10px 1px",
-  border: "1px solid #BA8B22",
+  border: "1px solid #8feaf2",
   "&:hover" :{
-    color: "#BA8B22",
+    color: "#8feaf2",
     background: "trasparent",   
     transition: ".5s all"
   }
@@ -42,10 +42,10 @@ export default function Footer() {
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Box className="socialicon_wrap">
-              <a href="https://twitter.com/BNBKingdom" target="_blank">
+              <a href="https://twitter.com/ETHSnowball" target="_blank">
                 <SocailIcon><TwitterIcon  /></SocailIcon>
               </a>
-              <a href="https://t.me/BNBKingdom" target="_blank">
+              <a href="https://t.me/ETHSnowball" target="_blank">
                 <SocailIcon><TelegramIcon /></SocailIcon>
               </a>
               <a href="https://discord.gg/ZC4Q49e7uE" target="_blank">
@@ -61,7 +61,7 @@ export default function Footer() {
               <a href="./audit.pdf" className="a-disable" target="_blank">
                 <SocailIcon><VerifiedUserRoundedIcon  /></SocailIcon>
               </a>
-              <a href="https://bnb-kingdom.gitbook.io/busd-kingdom/" target="_blank">
+              <a href="https://www.snowball.guru/doc/" target="_blank">
                 <SocailIcon><AutoStoriesIcon  /></SocailIcon>
               </a>
             </Box>

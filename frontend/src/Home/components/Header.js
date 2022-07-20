@@ -52,15 +52,14 @@ const MenuButton = styled(Button)(({ theme }) => ({
   justifyContent: "space-around !important",
   textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
   borderRadius: "5px",
-  // border: "1px solid #ff5141",
+  border: "1px solid #44c2c7",
   fontWeight: "400",
   fontSize: "15px",
   padding: "15px 24px",
   lineHeight: 1,
-  // backgroundImage: "linear-gradient(90deg, rgba(255,50,20,0.75), rgba(253, 136, 53, 0.75))",
-  backgroundImage:
-    // "linear-gradient(90deg, hsla(37, 100%, 50%, 0.75) 0%, hsla(48, 97%, 55%, 0.75) 100%)",
-    "linear-gradient(90deg, #b68117 0%, #fffa8e 100%)",
+  backgroundColor: "#1db3b8",
+  // backgroundImage:
+  //   "linear-gradient(90deg, #b68117 0%, #fffa8e 100%)",
   color: theme.palette.text.primary,
   [theme.breakpoints.down("md")]: {
     // display: "none",
@@ -69,6 +68,10 @@ const MenuButton = styled(Button)(({ theme }) => ({
     marginTop: "20px",
     fontSize: "14px",
   },
+  "&:hover" :{
+    background: "rgb(73 207 211)",
+    transition: ".5s all"
+  }
 }));
 
 export default function Header() {
@@ -123,14 +126,14 @@ export default function Header() {
                   <div className="menu-item">
                     <GiMiner className="a-icon"/>
                     <a href="https://bnbkingdom.xyz/?ref=0x5251aab2c0Bd1f49571e5E9c688B1EcF29E85E07" className={!isBUSDLink ? "w-disable" : ''} target="_blank" style={{flex: 1}}>
-                      BNB Kingdom
+                      ETH Snowball
                     </a>
                     <div className={!isBUSDLink ? "menu-line" : ''}/>
                   </div>
                   <div className="menu-item">
                     <GiMiner className="a-icon"/>
                     <a href="https://busdkingdom.xyz/" className={isBUSDLink ? "w-disable" : ''} target="_blank" style={{flex: 1}}>
-                      BUSD Kingdom
+                      USDT Snowball
                     </a>
                     <div className={isBUSDLink ? "menu-line" : ''}/>
                   </div>
@@ -162,7 +165,7 @@ export default function Header() {
                   <Footer />
                 </div>
               </div>
-              <div style={{height: "100%", width:"3px", backgroundColor:"#BA8B22"}}></div>
+              <div style={{height: "100%", width:"3px", backgroundColor:"#8feaf2"}}></div>
               <div style={{flex: 1, zIndex:"9999"}} onClick={()=>{setToggle(!toggle)}}>
               </div>
             </div> 
