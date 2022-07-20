@@ -122,7 +122,7 @@ export default function BakeCard() {
       return;
     }
     getBnbBalance(config.contractAddress).then((amount) => {
-      setContractBNB(fromWei(amount.toString()));
+      setContractBNB(fromWei(amount));
     });
   };
 
@@ -288,16 +288,15 @@ export default function BakeCard() {
         <div className="main-board">
           <Grid style={{display:"flex", justifyContent:"space-between", width:"100%"}}>
             <div>Contract</div>
-            <div>{ numberWithCommas(Number(contractBNB) + 94860 + 0.01 * ((Date.now() - 1658314152000) % 10000)) } BNB</div>
-            {/* <div>{ numberWithCommas(Number(contractBNB)) } BNB</div> */}
+            <div>{ contractBNB } BNB</div>
           </Grid>
           <Grid style={{display:"flex", justifyContent:"space-between", width:"100%"}}>
             <div>Wallet</div>
             <div>{ walletBalance.bnb } BNB</div>
           </Grid>
           <Grid style={{display:"flex", justifyContent:"space-between", width:"100%"}}>
-            <div>Your Staked BNB</div>
-            <div>{ walletBalance.beans } sBNB</div>
+            <div>Your Baked BNB</div>
+            <div>{ walletBalance.beans } Baked BNB</div>
           </Grid>
 
           <input 
@@ -313,13 +312,13 @@ export default function BakeCard() {
             <div className="input-box" style={{width:"49%", padding:"10px 5px"}}>
               <Grid style={{display:"flex", justifyContent:"space-between", width:"100%"}}>
                 <div>Min</div>
-                <div>0.5 BNB</div>
+                <div>0.1 BNB</div>
               </Grid>
             </div>
             <div className="input-box" style={{width:"49%", padding:"10px 5px"}}>
               <Grid style={{display:"flex", justifyContent:"space-between", width:"100%"}}>
                 <div>Max</div>
-                <div>200 BNB</div>
+                <div>50 BNB</div>
               </Grid>
             </div>
           </Grid>
@@ -328,7 +327,7 @@ export default function BakeCard() {
             disabled={wrongNetwork || !address || +bakeBNB === 0 || loading}
             onClick={ bake }
           >
-            STAKE BNB
+            Bake BNB
           </button>
 
           <Grid style={{display:"flex", justifyContent:"space-between", width:"100%"}}>
@@ -341,7 +340,7 @@ export default function BakeCard() {
             disabled={wrongNetwork || !address || loading}
             onClick={reBake}
           >
-            RE-STAKE
+            RE-BAKE
           </button>
 
           <button 
@@ -349,13 +348,13 @@ export default function BakeCard() {
             disabled={wrongNetwork || !address || loading}
             onClick={eatBeans}
           >
-            WITHDRAW
+            EAT BNB
           </button>
 
           {/* <div style={{ textAlign:"center" }}>6.66% Daily Return for 30 days - 200% ROI(no limits, deposit any amount any times)</div>
           <div style={{ textAlign:"center" }}>10% Referral Reward | 10% Dev fee (not affect on your deposit and earnings amount)</div> */}
         </div>
-        <div className="dashboard">Staking Info</div>
+        <div className="dashboard">Nutrition Facts</div>
         <div className="main-board">
           <Grid style={{display:"flex", justifyContent:"space-between", width:"100%"}}>
             <div>Daily Return</div>
@@ -366,7 +365,7 @@ export default function BakeCard() {
             <div>2400%</div>
           </Grid>
           <Grid style={{display:"flex", justifyContent:"space-between", width:"100%"}}>
-            <div>Referral Rewards</div>
+            <div>Dev Fee</div>
             <div>10%</div>
           </Grid>
         </div>
@@ -393,7 +392,7 @@ export default function BakeCard() {
               <AiOutlineCopy className="copyIcon"  onClick={() => { copyfunc(link) }}/> 
             </div>
           </div>
-          <div style={{ textAlign:"center" }}>Earn 10% of the BNB used to STAKE BNB from anyone who uses your referral link</div>
+          <div style={{ textAlign:"center" }}>Earn 10% of the BNB used to BAKE BNB from anyone who uses your referral link</div>
         </div>
       </Wrapper>
       
