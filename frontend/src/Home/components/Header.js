@@ -60,7 +60,7 @@ const MenuButton = styled(Button)(({ theme }) => ({
   color: theme.palette.text.primary,
   [theme.breakpoints.down("md")]: {
     // display: "none",
-    width: "40%",
+    width: "45%",
     height: "40px",
     marginTop: "20px",
     fontSize: "14px",

