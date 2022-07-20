@@ -1,10 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Titan+One&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
-
-@font-face {
-  font-family: Supercell;
-  src: url(./assets/Supercell-magic-webfont.ttf);
-}
+@import url('https://fonts.googleapis.com/css2?family=Krona+One');
+@import url("https://fonts.googleapis.com/css?family=Sofia&effect=neon|outline|emboss|shadow-multiple");
 
 body {
   margin: 0;
@@ -13,28 +8,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* background: url(./assets/bg-img.png) no-repeat; */
-  background-size: cover !important;
-  background-repeat: no-repeat !important;
-  background-position: center top !important;
-  background-attachment: fixed !important;
-  background-color: black !important;
-}
-
-body::-webkit-scrollbar {
-  width: 4px;
-}
-
-body::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-}
-
-body::-webkit-scrollbar-thumb {
-  background-image: linear-gradient(90deg, hsla(37, 100%, 50%, 1) 0%, hsla(48, 97%, 55%, 1) 100%);
-}
-
-body::-webkit-scrollbar-thumb:hover {
-  background-image: linear-gradient(90deg, hsla(48, 97%, 55%, 1) 0%, hsla(37, 100%, 50%, 1) 100%);
+  /* background: radial-gradient(circle at top right,rgba(23,33,94,.9) 0,#f2b04f 25%); */
+  background: #06232A;
+  position: relative;
 }
 
 code {
@@ -42,206 +18,211 @@ code {
     monospace;
 }
 
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Firefox */
-input[type="number"] {
-  -moz-appearance: textfield;
-}
-
-
-/* Screen Resolution Big screen Laptop 1920x1080 Media:- */
-@media only screen and (min-width: 1920px) {}
-
-/* For MacBook Pro Laptop 1440x990 Media Query:- */
-@media only screen and (min-width: 1367px) and (max-width: 1649px) {}
-
-/* For Small Desktop Screen Resolution 1366x768 Media:- */
-@media only screen and (max-width: 1366px) {}
-
-/* For Ipad-Pro devices 1024x1366 Media Query:- */
-@media only screen and (min-width: 992px) and (max-width: 1024px) {}
-
-
-/* For Ipad devices 768x1024 Media Query:- */
-@media only screen and (min-width: 768px) and (max-width: 991px) {}
-
-
-/* For Mobile devices and tablet both Media Query:- */
-@media only screen and (max-width: 991px) {
-  .card_divider {
-    display: none;
-  }
-}
-
-/* For Mobile devices Media Query:- */
-@media only screen and (max-width: 767px) {
-  .header_logo img {
-    width: 90%;
-  }
-
-  .landSet {
-    display: flex;
-    justify-content: center;
-    margin-right: 0 !important;
-  }
-}
-
-.landSet {
-  margin-right: 5%;
-}
-
-.Mui-disabled {
-  background-color: rgb(137, 111, 3) !important;
+.mybutton {
   color: white !important;
+  background-color: #43a5f3 !important;
+  box-shadow: none !important;
 }
 
-.MuiGrid-container {
-  margin-left: -12px !important;
+.mybutton:hover {
+  color:rgb(119, 6, 122) !important;
+  background-color: #52a1e2 !important;
 }
 
-.MuiSelect-select {
-  padding: 9px 0 !important;
-  border: 0px !important;
-  outline: 0px !important;
+@media (max-width: 765px) {
+  .mybutton {
+    color: white !important;
+    background-color: #43a5f3 !important;
+    box-shadow: none !important;
+  }
 }
 
-.MuiSelect-select:hover {
-  outline: none !important;
-  border: none !important;
+.wrapper {
+  border-radius: 0px !important;
+  border: 2px solid #b92be9;
+  box-shadow: none !important;
 }
 
+.title {
+  font-family: 'Krona One';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 55px;
+  margin-bottom: 30px;
 
-.MuiOutlinedInput-notchedOutline {
-  border-color: transparent !important;
-  border-style: none !important;
+  text-align: center;
+  letter-spacing: 0.0703846px;
+
+  margin: 50px auto;
+
+  color: #FFFFFF;
 }
 
-.MuiOutlinedInput-notchedOutline:hover {
-  border-color: transparent !important;
-  border-style: none !important;
-}
-
-.MuiOutlinedInput-notchedOutline:active {
-  border-color: transparent !important;
-  border-style: none !important;
-}
-
-.css-1d3z3hw-MuiOutlinedInput-notchedOutline {
-  border-style: none !important;
-}
-
-.menu-bar {
-  height: 100%;
-  width: 280px;
-  padding: 20px 0;
-  background: rgba(0,0,0,0.8);
-  /* animation-name: example;
-  animation-duration: 2s; */
-  transform: translateX(0%) translateY(0px) translateZ(0px);
-  text-align: left;
-  z-index: 4;
+.dashboard {
   display: flex;
   flex-direction: column;
-}
-
-.menu-list {
-  padding-left: 20px;
-}
-
-.menu-item {
-  margin: 20px 0px;
-  height: 40px;
-  display: flex;
+  justify-content: center;
   align-items: center;
+  padding: 10px;
+  gap: 10px;
+
+  /* position: absolute; */
+  width: 100%;
+  height: 70px;
+
+  background: #081B20;
+
+  font-family: 'Krona One';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 55px;
+  /* identical to box height, or 183% */
+
+  text-align: center;
+  letter-spacing: 0.0703846px;
+
+  color: #FFFFFF;
+
+  margin-top: 20px;
 }
 
-.menu-item a {
-  color: #FCCE1E;
-  text-decoration: none;
-  font-size: 18px;
+@media (max-width: 765px) {
+  .dashboard {
+    font-size: 22px;
+  }
 }
 
-.menu-item a:hover {
+.main-board {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 56px;
+  gap: 30px;
+  background-color: #123F49;
+
+  font-family: 'Krona One';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 35px;
+  margin-bottom: 40px;
+}
+
+@media (max-width: 765px) {
+  .main-board {
+    font-size: 15px;
+  }
+}
+
+.input-box {
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 10px 40px 10px 20px;
+  gap: 10px;
+
+  width: 100%;
+  background: transparent;
+  border: 1px solid #C5AC70 !important;
+  border: none;
   color: white;
 }
 
-.menu-line {
-  width: 3px;
-  height: 100%;
-  background-color: white;
-}
+.main-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 20px;
+  gap: 10px;
+  width: 100%;
+  border: none;
 
-.w-disable {
-  pointer-events: none;
-  color: white !important;
-}
-
-.a-disable {
-  pointer-events: none;
-  /* cursor: pointer; */
-  color: grey !important;
-}
-
-.a-icon {
-  color: #FCCE1E;
-  margin: -5px 15px;
-}
-
-.menu-Btn {
-  margin-top: 20px !important;
-  margin-right: 6% !important;
-  border: solid 3px #FCCE1E;
-  /* margin-left: -30px !important; */
-  /* margin-right: 10rem !important; */
-}
-
-.menu-Btn svg {
-  width: 2em !important;
-  height: 2em !important;
-  color: #FCCE1E;
-  border-radius: 10px;
-  /* color: linear-gradient(90deg, hsla(37, 100%, 50%, 1) 0%, hsla(48, 97%, 55%, 1) 100%); */
-}
-
-.menu-Btn svg:hover {
   color: white;
-  border-color: white;
+  background: #C5AC70;
+}
+
+.main-button:hover {
+  background: #43a5f3;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.second-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 20px;
+  gap: 10px;
+  width: 90%;
+  background: #C5AC70;
+
+  font-family: 'Krona One';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 55px;
+
+  text-align: center;
+  letter-spacing: 0.0703846px;
+
+  color: #FFFFFF;
+  margin: 20px 0;
+}
+
+.second-board {
+  text-align: -webkit-center;
+  margin: 50px 0;
+}
+
+/* .main-title {
+  font-weight: bold;
+  font-size: 80px;
+  color: #c0c602;
+  margin-bottom: 20px;
+  margin-left: 10px;
+  font-family: monospace;
+  text-align: center;
+} 
+*/
+
+.logo {
+  width: 80px;
 }
 
 @media only screen and (max-width: 767px) {
-  .menu-Btn {
-    margin-left: -6% !important;
+  .logo {
+    display: none;
   }
 
-  .menu-Btn svg {
-    width: 1em !important;
-    height: 1em !important;
+  .title {
+    font-size: 15px;
+    line-height: 30px;
+  }
+
+  .main-board {
+    padding: 20px 10px;
   }
 }
 
-.socialicon_wrap {
-  display: flex;
-  justify-content: space-evenly;
+@media (max-width: 765px) {
+  
 }
 
-.copy-div {
+.copyIcon {
+  margin-right: 15px;
+}
+
+.copyIcon:hover {
   cursor: pointer;
 }
 
-.copy-div:hover {
-  cursor: pointer;
-  color: grey !important
-}
-
-.MuiGrid-item {
-  padding-top: 0px !important;
-}
-
-.MuiBox-root {
-  margin-top: 0px !important;
+.logoTitle {
+  width: 80%;
+  margin-bottom: 30px;
 }
