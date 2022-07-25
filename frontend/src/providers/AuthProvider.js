@@ -25,6 +25,8 @@ const providerOptions = {
     package: WalletConnectProvider, // required
     options: {
       rpc: {
+        1: "https://mainnet.infura.io/v3/",
+        4: "https://rinkeby.infura.io/v3/",
         56: "https://bsc-dataseed.binance.org/",
         97: "https://data-seed-prebsc-1-s1.binance.org:8545/",
       },

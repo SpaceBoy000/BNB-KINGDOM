@@ -18,7 +18,7 @@ const StyledButton = styled('button')(
   font-family: 'Roboto',sans-serif;
   font-weight: 400;
   font-size: 1rem;
-  color: white;
+  color: #8feaf2;
   line-height: 1;
   background-color: transparent;
   // background-image: linear-gradient(90deg, hsla(37, 100%, 50%, 0.75) 0%, hsla(48, 97%, 55%, 0.75) 100%);
@@ -175,8 +175,8 @@ export default function UnstyledSelectRichOptions({ value, onChange, responsive 
 
 const coins = [
   { code: 'en', label: 'ENG' },
-  { code: 'fr', label: 'FRA' },
-  { code: 'sp', label: 'ESP' },
+  // { code: 'fr', label: 'FRA' },
+  // { code: 'sp', label: 'ESP' },
   { code: 'ru', label: 'PYC' },
   { code: 'ch', label: '中国人' },
 ];

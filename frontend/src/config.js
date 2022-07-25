@@ -1,8 +1,8 @@
 export const config = {
-  chainId: 56,
+  chainId: 1,
   contractAddressUSDT: "0x81eD26229b6D38C215fBe833cE277E35392D3604",
-  contractAddress: "0x2fe004ae1b6718b09380f8392aa91cd2d5039b98",
-  lottoryContractAddress: "0xF07049221B3CdA5C34e0e470B9709B690Fd28C9B", // "0x6b011A9A370fC0F7238b69Da0212463d51d96aAc",
-  scanLink:  // "https://testnet.bscscan.com/address/0x2fe004ae1b6718b09380f8392aa91cd2d5039b98#code",
-    "https://bscscan.com/address/0x2fe004ae1b6718b09380f8392aa91cd2d5039b98",
+  contractAddress: "0x8C68654277c573c8B4228484e6c505ba920cf5D8", // "0x41657fCD1b7FE0ABAb7aFB2C2a9028CC465eED19",
+  lottoryContractAddress: "0xF07049221B3CdA5C34e0e470B9709B690Fd28C9B",
+  scanLink: // "https://rinkeby.etherscan.io/address/0x41657fCD1b7FE0ABAb7aFB2C2a9028CC465eED19",
+    "https://etherscan.io/address/0x8C68654277c573c8B4228484e6c505ba920cf5D8",
 };

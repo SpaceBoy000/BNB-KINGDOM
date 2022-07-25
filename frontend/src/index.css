@@ -79,7 +79,7 @@ input[type="number"] {
 }
 
 /* For Mobile devices Media Query:- */
-@media only screen and (max-width: 767px) {
+@media only screen and (max-width: 991px) {
   .header_logo img {
     width: 90%;
   }
@@ -95,10 +95,10 @@ input[type="number"] {
   margin-right: 5%;
 }
 
-.Mui-disabled {
+/* .Mui-disabled {
   background-color: rgb(137, 111, 3) !important;
   color: white !important;
-}
+} */
 
 .MuiGrid-container {
   margin-left: -12px !important;
@@ -161,7 +161,7 @@ input[type="number"] {
 }
 
 .menu-item a {
-  color: #FCCE1E;
+  color: #8feaf2;
   text-decoration: none;
   font-size: 18px;
 }
@@ -188,14 +188,14 @@ input[type="number"] {
 }
 
 .a-icon {
-  color: #FCCE1E;
+  color: #8feaf2;
   margin: -5px 15px;
 }
 
 .menu-Btn {
   margin-top: 20px !important;
   margin-right: 6% !important;
-  border: solid 3px #FCCE1E;
+  border: solid 3px #8feaf2;
   /* margin-left: -30px !important; */
   /* margin-right: 10rem !important; */
 }
@@ -203,7 +203,7 @@ input[type="number"] {
 .menu-Btn svg {
   width: 2em !important;
   height: 2em !important;
-  color: #FCCE1E;
+  color: #8feaf2;
   border-radius: 10px;
   /* color: linear-gradient(90deg, hsla(37, 100%, 50%, 1) 0%, hsla(48, 97%, 55%, 1) 100%); */
 }

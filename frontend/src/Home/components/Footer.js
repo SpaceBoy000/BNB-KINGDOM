@@ -3,7 +3,7 @@ import Grid from "@mui/material/Grid";
 import { styled } from "@mui/system";
 import TwitterIcon from '@mui/icons-material/Twitter';  
 import TelegramIcon from '@mui/icons-material/Telegram';
-import { FaDiscord } from 'react-icons/fa';
+import { FaDiscord, FaEthereum } from 'react-icons/fa';
 import { BscscanIcon } from "../../components/Icons";
 import VerifiedUserRoundedIcon from '@mui/icons-material/VerifiedUserRounded';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
@@ -11,12 +11,12 @@ import { IconButton } from "@mui/material";
 import '../index'
 import { config } from "../../config"
 const SocailIcon = styled(IconButton)(({ theme }) => ({
-  background: "#FACC1E",
+  background: "#8feaf2",
   color: "#000",
   margin: "10px 1px",
-  border: "1px solid #FACC1E",
+  border: "1px solid #8feaf2",
   "&:hover" :{
-    color: "#FACC1E",
+    color: "#8feaf2",
     background: "trasparent",   
     transition: ".5s all"
   }
@@ -42,24 +42,24 @@ export default function Footer() {
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Box className="socialicon_wrap">
-              <a href="https://twitter.com/BNBKingdom" target="_blank">
+              <a href="https://twitter.com/ethsnowball" target="_blank">
                 <SocailIcon><TwitterIcon  /></SocailIcon>
               </a>
-              <a href="https://t.me/BNBKingdom" target="_blank">
+              <a href="https://t.me/ethsnowball" target="_blank">
                 <SocailIcon><TelegramIcon /></SocailIcon>
               </a>
-              <a href="https://discord.gg/ZC4Q49e7uE" target="_blank">
+              <a href="https://discord.gg/pnaDGkej2w" target="_blank">
                 <SocailIcon><FaDiscord /></SocailIcon>
               </a>
             </Box>
             <Box className="socialicon_wrap">
               <a href={ config.scanLink } target="_blank">
-                <SocailIcon><BscscanIcon  /></SocailIcon>                       
+                <SocailIcon><FaEthereum /></SocailIcon>                       
               </a>
-              <a href="./audit.pdf" target="_blank">
+              <a href="./audit.pdf" className="a-disable" target="_blank">
                 <SocailIcon><VerifiedUserRoundedIcon  /></SocailIcon>
               </a>
-              <a href="https://bnb-kingdom.gitbook.io/bnb-kingdom/" target="_blank">
+              <a href="https://ethsnowball.gitbook.io/doc" target="_blank">
                 <SocailIcon><AutoStoriesIcon  /></SocailIcon>
               </a>
             </Box>

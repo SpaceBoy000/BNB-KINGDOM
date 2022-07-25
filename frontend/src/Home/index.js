@@ -39,6 +39,18 @@ const BKDiv = styled(Box)(
     }
 `);
 
+const Countdown = styled("h3")(({ theme }) => ({
+  // color: ${props => props.theme.textPrimary};
+  position: "absolute",
+  width: "100%",
+  height: "45px",
+  backgroundImage: "linear-gradient(90deg, hsl(182deg 100% 50%) 0%, hsl(141deg 97% 55%) 100%)",
+  opacity:"0.4",
+  [theme.breakpoints.down("md")]: {
+    fontSize: 20,
+  },
+}));
+
 export default function Home() {
   const [countdown, setCountdown] = useState({
     alive: true,
@@ -68,7 +80,7 @@ export default function Home() {
   useEffect(() => {
     const interval = setInterval(() => {
         try {
-            const data = getCountdown(1658080800)
+            const data = getCountdown(1659024000)
             setCountdown({
                 alive: data.total > 0,
                 days: data.days,
@@ -109,6 +121,17 @@ export default function Home() {
             // minHeight: "100vh",
           }}
         />
+        <div style={{marginBottom:"-30px"}}>
+          { countdown.alive && 
+            <>
+              <Countdown/>
+              <div style={{color:"white", fontSize:"20px", textAlign:"center", padding:"10px", fontWeight:"bold", position:"relative"}}>
+              LAUNCH &nbsp; {`${countdown.days}D ${countdown.hours}H ${countdown.minutes}M ${countdown.seconds}S`}
+              </div>
+            </>
+          }
+        </div>
+
         <div style={{display:"flex", alignItems:"center"}}>
           <Header />
         </div>

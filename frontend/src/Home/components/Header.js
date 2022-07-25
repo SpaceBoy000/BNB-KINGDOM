@@ -50,13 +50,14 @@ const MenuButton = styled(Button)(({ theme }) => ({
   justifyContent: "space-around !important",
   textShadow: "3px 2px 3px rgb(0 0 0 / 78%)",
   borderRadius: "5px",
-  // border: "1px solid #ff5141",
+  border: "1px solid #44c2c7",
   fontWeight: "400",
   fontSize: "15px",
   padding: "15px 24px",
   lineHeight: 1,
-  backgroundImage:
-    "linear-gradient(90deg, #f5a002, #f3c518)",
+  backgroundColor: "#1db3b8",
+  // backgroundImage:
+  //   "linear-gradient(90deg, #f5a002, #f3c518)",
   color: theme.palette.text.primary,
   [theme.breakpoints.down("md")]: {
     // display: "none",
@@ -65,6 +66,10 @@ const MenuButton = styled(Button)(({ theme }) => ({
     marginTop: "20px",
     fontSize: "14px",
   },
+  "&:hover" :{
+    background: "rgb(73 207 211)",
+    transition: ".5s all"
+  }
 }));
 
 export default function Header() {
@@ -72,7 +77,7 @@ export default function Header() {
   let isMobile = window.matchMedia("only screen and (max-width: 900px)").matches;
   console.log("isMobile: ", isMobile);
   const link = window.location.href;
-  const isBUSDLink = link.includes("busd");
+  const isBUSDLink = link.includes("usdt");
 
   return (
     <Box
@@ -119,27 +124,27 @@ export default function Header() {
                 <div className="menu-list">
                   <div className="menu-item">
                     <GiMiner className="a-icon"/>
-                    <a href="https://bnbkingdom.xyz/?ref=0x5251aab2c0Bd1f49571e5E9c688B1EcF29E85E07" className={!isBUSDLink ? "w-disable" : ''} target="_blank" style={{flex: 1}}>
-                      BNB Kingdom
+                    <a href="https://ethsnowball.guru/" className={!isBUSDLink ? "w-disable" : ''} target="_blank" style={{flex: 1}}>
+                      ETH Snowball
                     </a>
                     <div className={!isBUSDLink ? "menu-line" : ''}/>
                   </div>
                   <div className="menu-item">
                     <GiMiner className="a-icon"/>
-                    <a href="https://busdkingdom.xyz/" className={isBUSDLink ? "w-disable" : ''} target="_blank" style={{flex: 1}}>
-                      BUSD Kingdom
+                    <a href="https://usdtsnowball.guru/" className="a-disable" target="_blank" style={{flex: 1}}>
+                      USDT Snowball
                     </a>
                     <div className={isBUSDLink ? "menu-line" : ''}/>
                   </div>
                   <div className="menu-item">
                     <FaCoins className="a-icon"/>
-                    <a href="https://twitter.com/BNBKingdom" target="_blank" className="a-disable">
+                    <a href="/" target="_blank" className="a-disable">
                       Token
                     </a>
                   </div>
                   <div className="menu-item">
                     <FaEthereum className="a-icon"/>
-                    <a href="https://twitter.com/BNBKingdom" target="_blank" className="a-disable">
+                    <a href="/" target="_blank" className="a-disable">
                       NFT
                     </a>
                   </div>
@@ -159,7 +164,7 @@ export default function Header() {
                   <Footer />
                 </div>
               </div>
-              <div style={{height: "100%", width:"3px", backgroundColor:"#FCCE1E"}}></div>
+              <div style={{height: "100%", width:"3px", backgroundColor:"#8feaf2"}}></div>
               <div style={{flex: 1, zIndex:"9999"}} onClick={()=>{setToggle(!toggle)}}>
               </div>
             </div> 
