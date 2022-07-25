@@ -46,6 +46,10 @@ const SmallScreenConnectButton = styled(Button)(({ theme }) => ({
   [theme.breakpoints.down("md")]: {
     display: "block",
   },
+  "&:hover" :{
+    background: "rgb(73 207 211)",
+    transition: ".5s all"
+  },
 }));
 
 export function shorten(str) {

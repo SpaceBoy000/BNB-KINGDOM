@@ -16,9 +16,6 @@ const MainButton = styled(Button)(({ theme }) => ({
     // "linear-gradient(90deg, #1b6866 0%, #0cc093 100%)",
   color: theme.palette.text.primary,
   maxHeight: "52px",
-  disabled: {
-    backgroundColor: 'red'
-  },
   "&:hover" :{
     background: "rgb(73 207 211)",
     transition: ".5s all"
