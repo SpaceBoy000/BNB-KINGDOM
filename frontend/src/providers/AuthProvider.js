@@ -10,6 +10,7 @@ import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
+import { StaticJsonRpcProvider, JsonRpcProvider, Web3Provider, WebSocketProvider } from "@ethersproject/providers";
 
 export const AuthContext = createContext({
   address: null,
@@ -18,6 +19,7 @@ export const AuthContext = createContext({
   disconnect: () => null,
   chainId: null,
   setSnackbar: () => null,
+  // provider: JsonRpcProvider,
 });
 
 const providerOptions = {
@@ -47,10 +49,11 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState(null);
   const [chainId, setChainId] = useState(null);
-  const [provider, setProvider] = useState(null);
+  // const [provider, setProvider] = useState(new StaticJsonRpcProvider("https://bsc-dataseed1.ninicoin.io"));
+  // const [provider, setProvider] = useState(null);
 
   const subscribeProvider = (provider) => {
-    setProvider(provider);
+    // setProvider(provider);
 
     provider.on("disconnect", (error) => {
       console.log(error);
@@ -126,7 +129,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ address, loading, connect, disconnect, chainId, setSnackbar, provider }}
+      value={{ address, loading, connect, disconnect, chainId, setSnackbar, /*provider*/ }}
     >
       {children}
       {snackbar && (

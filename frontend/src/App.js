@@ -5,7 +5,7 @@ import Home from "./Home";
 function App() {
   return (
     <BrowserRouter>
-      <Box paddingY={6} paddingX={2} style={{background:"#06232A"}}>
+      <Box className="app" paddingY={6} paddingX={2}>
         <Home />
       </Box>
     </BrowserRouter>

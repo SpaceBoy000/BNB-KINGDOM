@@ -3,9 +3,7 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* background: radial-gradient(circle at top right,rgba(23,33,94,.9) 0,#f2b04f 25%); */
@@ -16,6 +14,11 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.app {
+  background: linear-gradient(180deg,#141143 -8.99%, #342683 18.19%, #3E2783 68.84%);
+  font-family: "Inter !important";
 }
 
 .mybutton {
@@ -44,36 +47,46 @@ code {
 }
 
 .title {
-  font-family: 'Krona One';
+  margin-top: 100px;
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 72px;
+  line-height: 88px;
+  text-align: center;
+  color: white;
+}
+
+.content {
+  margin-top: 40px;
+  font-family: "Inter";
   font-style: normal;
   font-weight: 400;
-  font-size: 30px;
-  line-height: 55px;
-  margin-bottom: 30px;
-
+  font-size: 40px;
+  line-height: 60px;
   text-align: center;
-  letter-spacing: 0.0703846px;
-
-  margin: 50px auto;
-
-  color: #FFFFFF;
+  color: white;
+  max-width: 1192px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .dashboard {
+  box-shadow: rgb(255 255 255 / 40%) 0px 0px 40px;
+  border-top-left-radius: 36px;
+  border-top-right-radius: 36px;
+  margin-top: 80px !important;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 10px;
+  padding: 1.25rem;
   gap: 10px;
-
+  font-family: monospace;
   /* position: absolute; */
   width: 100%;
   height: 70px;
-
-  background: #081B20;
-
-  font-family: 'Krona One';
+  background: #2c2c73;
   font-style: normal;
   font-weight: 400;
   font-size: 30px;
@@ -81,7 +94,7 @@ code {
   /* identical to box height, or 183% */
 
   text-align: center;
-  letter-spacing: 0.0703846px;
+  letter-spacing: 1.0703846px;
 
   color: #FFFFFF;
 
@@ -91,30 +104,34 @@ code {
 @media (max-width: 765px) {
   .dashboard {
     font-size: 22px;
+    margin-top: 50px !important;
+  }
+
+  .content {
+    font-size: 18px;
+    line-height: 0.3px;
   }
 }
 
 .main-board {
+  border-bottom-left-radius: 36px;
+  border-bottom-right-radius: 36px;
+  box-shadow: rgb(255 255 255 / 40%) 0px 0px 40px;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 20px 56px;
+  padding: 48px;
   gap: 30px;
-  background-color: #123F49;
+  background-color: #23236d;
 
-  font-family: 'Krona One';
+  font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
-  font-size: 20px;
+  font-size: 24px;
   line-height: 35px;
-  margin-bottom: 40px;
-}
-
-@media (max-width: 765px) {
-  .main-board {
-    font-size: 15px;
-  }
+  margin-bottom: 120px !important;
 }
 
 .input-box {
@@ -128,8 +145,10 @@ code {
 
   width: 100%;
   background: transparent;
-  border: 1px solid #C5AC70 !important;
-  border: none;
+  /* border: 1px solid #C5AC70 !important; */
+  border-radius: 0.75rem;
+  border-color: rgb(117 117 165 / var(--tw-border-opacity));
+  border-width: 1px;
   color: white;
 }
 
@@ -141,15 +160,18 @@ code {
   padding: 10px 20px;
   gap: 10px;
   width: 100%;
-  border: none;
+  border: solid 1px #2d6d80;
+  border-radius: 8px;
+  cursor: pointer;
 
   color: white;
-  background: #C5AC70;
+  background: linear-gradient(94.11deg, rgb(30, 62, 101) 0%, rgba(30, 62, 101, 0) 100%);
 }
 
 .main-button:hover {
-  background: #43a5f3;
-  color: rgba(0, 0, 0, 0.87);
+  /* background: #43a5f3; */
+  border-color: #1481da;
+  /* color: rgba(0, 0, 0, 0.87); */
 }
 
 .second-button {
@@ -192,26 +214,52 @@ code {
 */
 
 .logo {
-  width: 80px;
+  /* width: 280px; */
 }
 
 @media only screen and (max-width: 767px) {
   .logo {
-    display: none;
+    /* display: none; */
+    width: 150px;
+    height: 40px;
+    /* height: 60px; */
   }
 
   .title {
-    font-size: 15px;
+    font-size: 28px;
     line-height: 30px;
+    margin-top: 30px;
+    margin-bottom: 30px;
   }
 
   .main-board {
-    padding: 20px 10px;
+    font-size: 15px;
+    padding: 20px 20px;
+    margin-bottom: 30px !important;
   }
 }
 
 @media (max-width: 765px) {
-  
+  .benefit-row {
+    width: 100% !important;
+  }
+
+  .benefit-item {
+    width: 45% !important;
+    padding: 5px !important;
+  }
+
+  .calc-input {
+    width: 100% !important;
+    margin: 5px !important;
+    padding: 5px !important;
+  }
+
+  .calc-result {
+    line-height: 50px !important;
+    font-size: 0.75rem !important;
+    align-self: self-start;
+  }
 }
 
 .copyIcon {
@@ -225,4 +273,39 @@ code {
 .logoTitle {
   width: 80%;
   margin-bottom: 30px;
+}
+
+.benefit-row {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+}
+
+.benefit-item {
+  background: linear-gradient(85.3deg, #1E3E65 -73.99%, rgba(30, 62, 101, 0) 198.69%);
+  border: solid 1px #2d6d80;
+  border-radius: 0.5rem;
+  width: 30%;
+  font-size: 1.25rem;
+  text-align: center;
+  padding: 15px;
+}
+
+.social-item {
+  padding: 10px;
+}
+
+.calc-input {
+  background: transparent;
+  color: white;
+  border: solid 1px #2d6d80;
+  border-radius: 0.75rem;
+  padding: 10px 20px;
+  margin: 20px;
+}
+
+.calc-result {
+  width: 33%;
+  font-size: 1.25rem;
+  line-height: 70px;
 }

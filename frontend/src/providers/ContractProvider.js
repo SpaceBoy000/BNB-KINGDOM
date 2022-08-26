@@ -7,7 +7,7 @@ import { useAuthContext } from "./AuthProvider";
 import { config } from "../config";
 
 export const ContractContext = createContext({
-  busdcontract: null,
+  busdContract: null,
   contract: null,
   web: null,
   wrongNetwork: false,
@@ -19,7 +19,7 @@ export const ContractContext = createContext({
 
 export const ContractProvider = ({ children }) => {
   const [contract, setContract] = useState();
-  const [contractUSDT, setContractUSDT] = useState();
+  const [busdContract, setContractBUSD] = useState();
   const [contractLottory, setContractLottory] = useState();
   const [web3, setWeb3] = useState();
   const { chainId, setSnackbar, provider } = useAuthContext();
@@ -46,21 +46,21 @@ export const ContractProvider = ({ children }) => {
     const contract = new web3Instance.eth.Contract(abi, config.contractAddress);
     setContract(contract);
 
-    const contractLottory = new web3Instance.eth.Contract(lottoryAbi, config.lottoryContractAddress);
+    const contractLottory = new web3Instance.eth.Contract(lottoryAbi, config.contractTimePool);
     setContractLottory(contractLottory);
 
-    const contractUSDT = new web3Instance.eth.Contract(erc20Abi, config.contractAddressUSDT);
-    setContractUSDT(contractUSDT);
+    const busdContract = new web3Instance.eth.Contract(erc20Abi, config.contractAddressUSDT);
+    setContractBUSD(busdContract);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainId]);
 
-  // const web3Instance2 = new Web3();
-  // web3Instance2.setProvider(Web3.givenProvider);
+  const web3Instance2 = new Web3();
+  web3Instance2.setProvider(Web3.givenProvider);
   // const busdAddress = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
-  // const busdcontract = new web3Instance2.eth.Contract(erc20Abi, busdAddress);
-  // const getBusdBalance = (address) => busdcontract.methods.balanceOf(address).call();
-  // const getBusdApproved = (address) => busdcontract.methods.allowance(address,config.contractAddress).call();
+  const busdcontract2 = new web3Instance2.eth.Contract(erc20Abi, config.contractAddressUSDT);
+  const getBusdBalance = (address) => busdcontract2.methods.balanceOf(address).call();
+  const getBusdApproved = (address) => busdcontract2.methods.allowance(address,config.contractAddress).call();
   const getBnbBalance = (address) => web3.eth.getBalance(address);
   const fromWei = (wei, unit = "ether") =>
     parseFloat(Web3.utils.fromWei(wei, unit)).toFixed(3);
@@ -68,7 +68,7 @@ export const ContractProvider = ({ children }) => {
 
   return (
     <ContractContext.Provider
-      value={{ web3, contract, contractUSDT, contractLottory, wrongNetwork, getBnbBalance, fromWei, toWei}}
+      value={{ web3, contract, busdContract, contractLottory, wrongNetwork, getBnbBalance, getBusdApproved, getBusdBalance, fromWei, toWei}}
     >
       {children}
     </ContractContext.Provider>
